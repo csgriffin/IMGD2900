@@ -211,13 +211,23 @@ var G = (function (){
 	const G_COLOR_BLUE = [50, 50, 205];
 	const G_COLOR_RED = [205, 0, 0];
 	const G_COLOR_DGRAY = [105, 105, 105];
-	const G_COLOR_WHITE = [240, 240, 240];
+	const G_COLOR_WHITE = [220, 220, 220];
 	const G_COLOR_BLACK = [0, 0, 0];
 	const G_COLOR_GRAY = [205, 205, 205];
+    const G_COLOR_GREEN = [0, 205, 0];
+    const G_COLOR_ORANGE = [255, 128, 0];
+
+    const G_COLOR_ERASER = [255, 255, 255];
 
 	//-------------color change
 	const G_COLOR_BACKGROUND = [50, 50, 50];
 
+    const ERASE_RADIUS = 3;
+
+    const MAX_ERASERS = 4;
+
+    var i;
+    var j;
 
 	//Package snake functionality together
 	var snake = (function (){
@@ -229,6 +239,16 @@ var G = (function (){
 		var tempPosX;
 		var tempPosY;
 
+        var dataArray;
+
+        var x;
+        var y;
+
+        var numberOfErasers = 0;
+
+        var randX;
+        var randY;
+
 		//Erase border of specified bead
 		function eraseBorder(posX, posY){
 			PS.borderColor(posX, posY, G_COLOR_GRAY);
@@ -236,22 +256,122 @@ var G = (function (){
 
 		var snakeExports = {
 
-			//Update the snake
-			tickSnake: function(){
-				tempPosX = posX;
-				tempPosY = posY;
+            //Creates erasers dynamically
+            createEraser: function(){
+                if(numberOfErasers >= MAX_ERASERS){
+                    return;
+                }
 
-				if(snake.moveSnake(snakeDirection) === 0){
+                randX = PS.random(100);
+                if (randX <= 70){
+                    return;
+                }
+
+                randX = PS.random(32) - 1;
+                randY = PS.random(30) + 1;
+
+                switch(PS.data(randX, randY)[0]) {
+                    case G_COLOR_WHITE:
+
+                        snake.colorBead(randX, randY, G_COLOR_WHITE, true);
+                        snake.storeData(randX, randY, G_COLOR_WHITE, true);
+
+                        numberOfErasers += 1;
+
+                        return;
+                    case G_COLOR_DGRAY:
+
+                        snake.colorBead(randX, randY, G_COLOR_DGRAY, true);
+                        snake.storeData(randX, randY, G_COLOR_DGRAY, true)
+
+                        numberOfErasers += 1;
+
+                        return;
+                    case G_COLOR_RED:
+
+                        snake.colorBead(randX, randY, G_COLOR_RED, true);
+                        snake.storeData(randX, randY, G_COLOR_RED, true);
+
+                        numberOfErasers += 1;
+
+                        return;
+                    case G_COLOR_BLUE:
+
+                        snake.colorBead(randX, randY, G_COLOR_BLUE, true);
+                        snake.storeData(randX, randY, G_COLOR_BLUE, true);
+
+                        numberOfErasers += 1;
+
+                        return;
+                    default:
+                    	return;
+                }
+            },
+
+            //Color a bead
+            colorBead: function(posX, posY, color, isEraser){
+                PS.color(posX, posY, color);
+                if(isEraser){
+                    PS.radius(posX, posY, 50);
+                    PS.bgColor(posX, posY, G_COLOR_WHITE);
+                    PS.bgAlpha(posX, posY, 255);
+                }
+                if(!isEraser){
+                    PS.radius(posX, posY, 0);
+                }
+            },
+
+            //Erases an area
+            erase: function (posX, posY){
+                for(x = posX - ERASE_RADIUS; x <= posX + ERASE_RADIUS; x++){
+                    for(y = posY - ERASE_RADIUS; y <= posY + ERASE_RADIUS; y++){
+                        if((0 <= x) && (x <= 31) && (2 <= y) && (y <= 31)){
+                            snake.colorBead(x, y, G_COLOR_ERASER, false);
+                            snake.storeData(x, y, G_COLOR_ERASER, false);
+                        }
+                    }
+                }
+            },
+
+            //Checks if a bead is an eraser
+            isEraser: function(posX, posY){
+                if((PS.data(posX, posY) !== 0) && (PS.data(posX, posY)[1] === true)){
+                    return true;
+                }
+                return false;
+            },
+
+            //Store data to a bead
+            storeData: function(posX, posY, color, isEraser){
+                dataArray = [color, isEraser];
+                PS.data(posX, posY, dataArray);
+            },
+
+            //Update the snake
+            tickSnake: function(){
+                snake.createEraser();
+
+                tempPosX = posX;
+                tempPosY = posY;
+
+                if(snake.moveSnake(snakeDirection) === 0){
+                    if(snake.isEraser(posX, posY)){
+                    	if(PS.data(posX, posY)[0] !== snakeColor){
+                            snake.erase(posX, posY);
+                            numberOfErasers -= 1;
+						}
+                    }
                     snake.drawSnake();
+                    snake.storeData(posX, posY, snakeColor, false);
                     eraseBorder(tempPosX, tempPosY);
-				}
-			},
+                }
+            },
 
-			//Draw the snake at posX, posY, with snakeColor
-			drawSnake: function(){
-				PS.color(posX, posY, snakeColor);
-				PS.borderColor(posX, posY, G_COLOR_BLACK);
-			},
+            //Draw the snake at posX, posY, with snakeColor
+            drawSnake: function(){
+                snake.colorBead(posX, posY, snakeColor, false);
+                PS.borderColor(posX, posY, G_COLOR_BLACK);
+            },
 
 			//Move the snake if it can move in the specified direction
 			moveSnake: function(direction){
@@ -329,6 +449,7 @@ var G = (function (){
 		//Initialize the game
 		init: function(system, options){
             PS.gridSize( 32, 32 );
+            PS.color(PS.ALL, PS.ALL, G_COLOR_ERASER);
             PS.color(PS.ALL, 0, 0, 0, 0);
             PS.color(PS.ALL, 1, 0, 0, 0);
             PS.color(0, 0, G_COLOR_WHITE);
@@ -342,6 +463,11 @@ var G = (function (){
             PS.borderColor(PS.ALL, PS.ALL, G_COLOR_GRAY);
             PS.gridColor(G_COLOR_BACKGROUND);
 
+			for(i = 0; i < 32; i++){
+				for(j = 2; j < 32; j++){
+                    snake.storeData(i, j, G_COLOR_ERASER, false);
+				}
+			}
             snake.drawSnake();
 
             PS.timerStart(TICK_LENGTH, snake.tickSnake);
