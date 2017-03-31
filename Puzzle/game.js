@@ -202,14 +202,16 @@ var G = (function () {
 	const gridSizeX = 8;
 	const gridSizeY = 8;
 
-	const G_COLOR_LIT_FLOOR = [0, 0, 0];
+	const G_COLOR_LIT_FLOOR = [74, 80, 122];
 	const G_COLOR_FLOOR = [93, 93, 93];
 	const G_COLOR_WALL = [64, 64, 64];
 	const G_COLOR_END = [200, 200, 200];
+	const G_COLOR_LIGHT = [16, 40, 204];
+	const G_COLOR_PLAYER = [197, 197, 197];
 
 
 
-	var test = "b b b b v b b b b b r r r r b b b b r r r r b b b b r b b r b b b b r b b r b b b b r r r r b b b b r r r r b b b b b o b b b b";
+	var test = "b b b b e b b b b b r r v r b b b b r b b v b b b b r b b r b b b b r b b r b b b b r b b v b b b b r v s r b b b b b o b b b b";
 
 	var map;
 	var counter;
@@ -234,6 +236,9 @@ var G = (function () {
 		for(yIt = 0; yIt < gridSizeY; yIt++){
 			for(xIt = 0; xIt < gridSizeX; xIt++){
 				PS.data(xIt, yIt, map[counter]);
+				if(map[counter] === "s"){
+					PS.data(xIt, yIt, "r");
+				}
 				drawBead(xIt, yIt, map[counter]);
 				counter++;
 
@@ -300,7 +305,7 @@ var G = (function () {
 				break;
 
 			case "s":
-				PS.color(xPos, yPos, [0, 0, 0]);
+				PS.color(xPos, yPos, G_COLOR_PLAYER);
 				PS.radius(xPos, yPos, 50);
 				break;
 
@@ -310,7 +315,7 @@ var G = (function () {
 				break;
 
 			case "l":
-				PS.color(xPos, yPos, [0, 255, 0]);
+				PS.color(xPos, yPos, G_COLOR_LIGHT);
                 PS.radius(xPos, yPos, 0);
 				break;
 
@@ -364,12 +369,13 @@ var G = (function () {
 
         counter = 0;
 
+        /*
         for(yIt = 0; yIt < gridSizeY; yIt++){
             for(xIt = 0; xIt < gridSizeX; xIt++){
                 drawBead(yIt, xIt, map[counter]);
                 counter++;
             }
-        }
+        }*/
 
 		for(iterator = 0; iterator < map.length; iterator++){
 			if(map[iterator] === "l"){
