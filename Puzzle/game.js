@@ -208,7 +208,7 @@ var G = (function () {
 	const G_COLOR_END = [200, 200, 200];
 
 
-	var test = "b b b b b b b b r r r r b r v e r r r r b r r r r r r r b r r r r r r r r r r r r r r r r r r r r r r r r r r r s r r r r r r o";
+	var test = "b b b b v b b b b b r r r r b b b b r r r r b b b b r b b r b b b b r b b r b b b b r r r r b b b b r r r r b b b b b o b b b b";
 
 	var map;
 	var counter;
