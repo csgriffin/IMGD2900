@@ -211,7 +211,7 @@ var G = (function () {
 
 
 
-	var test = "b b b b e b b b b b r r v r b b b b r b b v b b b b r b b r b b b b r b b r b b b b r b b v b b b b r v s r b b b b b o b b b b";
+	var test = "b b b b e b b b b b r r r r b b b b r b b r b b b b r b b r b b b b r b b r b b b b r b b r b b b b r r s r b b b b b o b b b b";
 
 	var map;
 	var counter;
@@ -227,12 +227,13 @@ var G = (function () {
 	var counter2;
 	var counter3;
 
-	var victoryArray;
+	var arrayHolder;
+
+	var victoryArray = [];
 
 	function setupMap(mapVar){
 		counter = 0;
 		counter2 = 0;
-		victoryArray = []
 		for(yIt = 0; yIt < gridSizeY; yIt++){
 			for(xIt = 0; xIt < gridSizeX; xIt++){
 				PS.data(xIt, yIt, map[counter]);
@@ -241,11 +242,6 @@ var G = (function () {
 				}
 				drawBead(xIt, yIt, map[counter]);
 				counter++;
-
-				if(map[counter] === "v"){
-					victoryArray[counter2] = counter;
-					counter2++;
-				}
 			}
 		}
 	}
@@ -337,13 +333,77 @@ var G = (function () {
 		}
 	}
 
+    var closedArray = [];
+
 	function isVictorious(){
-		for(iterator = 0; iterator < victoryArray.length; iterator++){
-			if(map[victoryArray[iterator]] !== "l"){
-				return false;
+		closedArray.length = 0;
+		for(iterator = 0; iterator < map.length; iterator++){
+			if(map[iterator] === "e"){
+				victoryArray.push([iterator % gridSizeX, Math.floor(iterator / gridSizeX)]);
+			}
+			if(map[iterator] === "o"){
+                victoryArray.push([iterator % gridSizeX, Math.floor(iterator / gridSizeX)]);
 			}
 		}
-		return true;
+        for(iterator = 0; iterator < map.length; iterator++) {
+            if (map[iterator] === "e") {
+                return iterateNeighbors([iterator % gridSizeX, Math.floor(iterator / gridSizeX)]);
+            }
+        }
+        return false;
+	}
+
+	var someKindaFlag = false;
+
+	function iterateNeighbors(start){
+		//PS.debug("Iterating at " + start[0] + " " + start[1] + "\n");
+		/*for(iterator = 0; iterator < victoryArray.length; iterator++){
+			PS.debug("Victory Array contains " + victoryArray[iterator] + " \n");
+		}*/
+		someKindaFlag = false;
+		for(counter2 = 0; counter2 < victoryArray.length; counter2++){
+			if((victoryArray[counter2][0] === start[0]) && (victoryArray[counter2][1] === start[1])){
+				//PS.debug("Made it here!");
+                if(closedArray.length === victoryArray.length){
+                	//PS.debug("Uh oh");
+                    return false;
+                }
+                if(map[(start[1] * gridSizeX) + start[0]] === "o"){
+                    return true;
+                }
+                for(iterator = 0; iterator < closedArray.length; iterator++){
+                    if((closedArray[iterator][0] === start[0]) && (closedArray[iterator][1] === start[1])){
+                    	//PS.debug("In closed");
+                        someKindaFlag = true;
+                    }
+                }
+                if(someKindaFlag === false) {
+                	//PS.debug("Made it \n");
+                    closedArray.push(start);
+                    if (start[0] > 0) {
+                        if(iterateNeighbors([start[0] - 1, start[1]])){
+                            return true;
+                        }
+                    }
+                    if (start[0] < gridSizeX - 1) {
+                        if(iterateNeighbors([start[0] + 1, start[1]])){
+                            return true;
+                        }
+                    }
+                    if (start[1] > 0) {
+                        if(iterateNeighbors([start[0], start[1] - 1])){
+                            return true;
+                        }
+                    }
+                    if (start[1] < gridSizeY - 1) {
+                        if(iterateNeighbors([start[0], start[1] + 1])){
+                            return true;
+                        }
+                    }
+                }
+			}
+		}
+		return false;
 	}
 
 	function placeLight(){
@@ -369,13 +429,14 @@ var G = (function () {
 
         counter = 0;
 
-        /*
+        victoryArray.length = 0;
+
         for(yIt = 0; yIt < gridSizeY; yIt++){
             for(xIt = 0; xIt < gridSizeX; xIt++){
-                drawBead(yIt, xIt, map[counter]);
+                drawBead(xIt, yIt, map[counter]);
                 counter++;
             }
-        }*/
+        }
 
 		for(iterator = 0; iterator < map.length; iterator++){
 			if(map[iterator] === "l"){
@@ -385,21 +446,33 @@ var G = (function () {
 		}
 
 		for(iterator = 0; iterator < lightArray.length; iterator++){
+			arrayHolder = [lightArray[iterator] % gridSizeX, Math.floor(lightArray[iterator] / gridSizeY)];
+			victoryArray.push(arrayHolder);
+
 			while(true) {
-                if ((lightArray[iterator] - gridSizeX) >= 0 && (PS.data((lightArray[iterator] - gridSizeX) % gridSizeX, Math.floor((lightArray[iterator] - gridSizeX) / gridSizeY)) === ("r" || "v"))) {
+                if ((lightArray[iterator] - gridSizeX) >= 0 && (PS.data((lightArray[iterator] - gridSizeX) % gridSizeX, Math.floor((lightArray[iterator] - gridSizeX) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] - gridSizeX) % gridSizeX, Math.floor((lightArray[iterator] - gridSizeX) / gridSizeY), "p");
+
+                    arrayHolder = [(lightArray[iterator] - gridSizeX) % gridSizeX, Math.floor((lightArray[iterator] - gridSizeX) / gridSizeY)];
+                    victoryArray.push(arrayHolder);
                 } else{
                 	break;
 				}
 
-                if ((lightArray[iterator] - (2 * gridSizeX)) >= 0 && (PS.data((lightArray[iterator] - (2 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] - (2 * gridSizeX)) / gridSizeY)) === ("r" || "v"))) {
+                if ((lightArray[iterator] - (2 * gridSizeX)) >= 0 && (PS.data((lightArray[iterator] - (2 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] - (2 * gridSizeX)) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] - (2 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] - (2 * gridSizeX)) / gridSizeY), "p");
+
+                    arrayHolder = [(lightArray[iterator] - (2 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] - (2 * gridSizeX)) / gridSizeY)];
+                    victoryArray.push(arrayHolder);
                 } else{
                 	break;
 				}
 
-                if ((lightArray[iterator] - (3 * gridSizeX)) >= 0 && (PS.data((lightArray[iterator] - (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] - (3 * gridSizeX)) / gridSizeY)) === ("r" || "v"))) {
+                if ((lightArray[iterator] - (3 * gridSizeX)) >= 0 && (PS.data((lightArray[iterator] - (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] - (3 * gridSizeX)) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] - (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] - (3 * gridSizeX)) / gridSizeY), "p");
+
+                    arrayHolder = [(lightArray[iterator] - (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] - (3 * gridSizeX)) / gridSizeY)];
+                    victoryArray.push(arrayHolder);
                 } else{
                 	break;
 				}
@@ -407,20 +480,29 @@ var G = (function () {
             }
 
             while(true) {
-                if ((lightArray[iterator] % gridSizeX) > 0 && (PS.data((lightArray[iterator] - 1) % gridSizeX, Math.floor((lightArray[iterator] - 1) / gridSizeY)) === ("r" || "v"))) {
+                if ((lightArray[iterator] % gridSizeX) > 0 && (PS.data((lightArray[iterator] - 1) % gridSizeX, Math.floor((lightArray[iterator] - 1) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] - 1) % gridSizeX, Math.floor((lightArray[iterator] - 1) / gridSizeY), "p");
+
+                    arrayHolder = [(lightArray[iterator] - 1) % gridSizeX, Math.floor((lightArray[iterator] - 1) / gridSizeY)];
+                    victoryArray.push(arrayHolder);
                 } else{
                     break;
                 }
 
-                if ((lightArray[iterator] % gridSizeX) > 1 && (PS.data((lightArray[iterator] - 2) % gridSizeX, Math.floor((lightArray[iterator] - 2) / gridSizeY)) === ("r" || "v"))) {
+                if ((lightArray[iterator] % gridSizeX) > 1 && (PS.data((lightArray[iterator] - 2) % gridSizeX, Math.floor((lightArray[iterator] - 2) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] - 2) % gridSizeX, Math.floor((lightArray[iterator] - 2) / gridSizeY), "p");
+
+                    arrayHolder = [(lightArray[iterator] - 2) % gridSizeX, Math.floor((lightArray[iterator] - 2) / gridSizeY)];
+                    victoryArray.push(arrayHolder);
                 } else{
                     break;
                 }
 
-                if ((lightArray[iterator] % gridSizeX) > 2 && (PS.data((lightArray[iterator] - 3) % gridSizeX, Math.floor((lightArray[iterator] - 1) / gridSizeY)) === ("r" || "v"))) {
+                if ((lightArray[iterator] % gridSizeX) > 2 && (PS.data((lightArray[iterator] - 3) % gridSizeX, Math.floor((lightArray[iterator] - 1) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] - 3) % gridSizeX, Math.floor((lightArray[iterator] - 1) / gridSizeY), "p");
+
+                    arrayHolder = [(lightArray[iterator] - 3) % gridSizeX, Math.floor((lightArray[iterator] - 1) / gridSizeY)];
+                    victoryArray.push(arrayHolder);
                 } else{
                     break;
                 }
@@ -428,20 +510,29 @@ var G = (function () {
             }
 
             while(true) {
-                if ((lightArray[iterator] + gridSizeX) < (gridSizeX * gridSizeY) && (PS.data((lightArray[iterator] + gridSizeX) % gridSizeX, Math.floor((lightArray[iterator] + gridSizeX) / gridSizeY)) === ("r" || "v"))) {
+                if ((lightArray[iterator] + gridSizeX) < (gridSizeX * gridSizeY) && (PS.data((lightArray[iterator] + gridSizeX) % gridSizeX, Math.floor((lightArray[iterator] + gridSizeX) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] + gridSizeX) % gridSizeX, Math.floor((lightArray[iterator] + gridSizeX) / gridSizeY), "p");
+
+                    arrayHolder = [(lightArray[iterator] + gridSizeX) % gridSizeX, Math.floor((lightArray[iterator] + gridSizeX) / gridSizeY)];
+                    victoryArray.push(arrayHolder);
                 } else{
                     break;
                 }
 
-                if ((lightArray[iterator] + (2 * gridSizeX)) < (gridSizeX * gridSizeY) && (PS.data((lightArray[iterator] + (2 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] + (2 * gridSizeX)) / gridSizeY)) === ("r" || "v"))) {
+                if ((lightArray[iterator] + (2 * gridSizeX)) < (gridSizeX * gridSizeY) && (PS.data((lightArray[iterator] + (2 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] + (2 * gridSizeX)) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] + (2 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] + (2 * gridSizeX)) / gridSizeY), "p");
+
+                    arrayHolder = [(lightArray[iterator] + (2 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] + (2 * gridSizeX)) / gridSizeY)];
+                    victoryArray.push(arrayHolder);
                 } else{
                     break;
                 }
 
-                if ((lightArray[iterator] + (3 * gridSizeX)) < (gridSizeX * gridSizeY) && (PS.data((lightArray[iterator] + (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] + (3 * gridSizeX)) / gridSizeY)) === ("r" || "v"))) {
+                if ((lightArray[iterator] + (3 * gridSizeX)) < (gridSizeX * gridSizeY) && (PS.data((lightArray[iterator] + (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] + (3 * gridSizeX)) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] + (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] + (3 * gridSizeX)) / gridSizeY), "p");
+
+                    arrayHolder = [(lightArray[iterator] + (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] + (3 * gridSizeX)) / gridSizeY)];
+                    victoryArray.push(arrayHolder);
                 } else{
                     break;
                 }
@@ -449,18 +540,27 @@ var G = (function () {
             }
 
             while(true) {
-                if ((lightArray[iterator] % gridSizeX) < gridSizeX - 1 && (PS.data((lightArray[iterator] + 1) % gridSizeX, Math.floor((lightArray[iterator] + 1) / gridSizeY)) === ("r" || "v"))) {
+                if ((lightArray[iterator] % gridSizeX) < gridSizeX - 1 && (PS.data((lightArray[iterator] + 1) % gridSizeX, Math.floor((lightArray[iterator] + 1) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] + 1) % gridSizeX, Math.floor((lightArray[iterator] + 1) / gridSizeY), "p");
+
+                    arrayHolder = [(lightArray[iterator] + 1) % gridSizeX, Math.floor((lightArray[iterator] + 1) / gridSizeY)];
+                    victoryArray.push(arrayHolder);
                 } else{
                     break;
                 }
-                if ((lightArray[iterator] % gridSizeX) < (gridSizeX - 2) && (PS.data((lightArray[iterator] + 2) % gridSizeX, Math.floor((lightArray[iterator] + 2) / gridSizeY)) === ("r" || "v"))) {
+                if ((lightArray[iterator] % gridSizeX) < (gridSizeX - 2) && (PS.data((lightArray[iterator] + 2) % gridSizeX, Math.floor((lightArray[iterator] + 2) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] + 2) % gridSizeX, Math.floor((lightArray[iterator] + 2) / gridSizeY), "p");
+
+                    arrayHolder = [(lightArray[iterator] + 2) % gridSizeX, Math.floor((lightArray[iterator] + 2) / gridSizeY)];
+                    victoryArray.push(arrayHolder);
                 } else{
                     break;
                 }
-                if ((lightArray[iterator] % gridSizeX) < (gridSizeX - 3) && (PS.data((lightArray[iterator] + 3) % gridSizeX, Math.floor((lightArray[iterator] + 1) / gridSizeY)) === ("r" || "v"))) {
+                if ((lightArray[iterator] % gridSizeX) < (gridSizeX - 3) && (PS.data((lightArray[iterator] + 3) % gridSizeX, Math.floor((lightArray[iterator] + 1) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] + 3) % gridSizeX, Math.floor((lightArray[iterator] + 1) / gridSizeY), "p");
+
+                    arrayHolder = [(lightArray[iterator] + 3) % gridSizeX, Math.floor((lightArray[iterator] + 1) / gridSizeY)];
+                    victoryArray.push(arrayHolder);
                 } else{
                     break;
                 }
