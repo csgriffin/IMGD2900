@@ -199,8 +199,7 @@ PS.shutdown = function( options ) {
 
 var G = (function () {
 
-	const gridSizeX = 8;
-	const gridSizeY = 8;
+	var currentMap = 0;
 
 	const G_COLOR_LIT_FLOOR = [74, 80, 122];
 	const G_COLOR_FLOOR = [93, 93, 93];
@@ -209,9 +208,27 @@ var G = (function () {
 	const G_COLOR_LIGHT = [16, 40, 204];
 	const G_COLOR_PLAYER = [197, 197, 197];
 
+	var sizeArray = [[8, 8], [8, 8], [10, 10]];
 
+	var maxLightArray = [3, 4, 5];
 
-	var test = "b b b b e b b b b b r r r r b b b b r b b r b b b b r b b r b b b b r b b r b b b b r b b r b b b b r r s r b b b b b o b b b b";
+    var gridSizeX = sizeArray[0][0];
+    var gridSizeY = sizeArray[0][1];
+
+	var mapArray = ["b b b b e b b b b b r r r r b b b b r b b r b b b b r b b r b b b b r b b r b b b b r b b r b b b b r r s r b b b b b o b b b b",
+        			"b b b b e b b b b b r r r r b b b b r b b r b b b b r b b r b b b b r b b r b b b b r b b r b b b b r r s r b b b b b o r r r r",
+       				"e r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r s o"]
+
+	var test = mapArray[0];
+
+	//var test = "e r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r r s o"
+
+	var maxLights = maxLightArray[0];
+
+	var maxLightCounter = 0;
+
+	var systemVar;
+	var optionsVar;
 
 	var map;
 	var counter;
@@ -244,6 +261,8 @@ var G = (function () {
 				counter++;
 			}
 		}
+		movePlayer(3);
+		movePlayer(1);
 	}
 
 	function getPlayerPos(){
@@ -340,11 +359,18 @@ var G = (function () {
 		for(iterator = 0; iterator < map.length; iterator++){
 			if(map[iterator] === "e"){
 				victoryArray.push([iterator % gridSizeX, Math.floor(iterator / gridSizeX)]);
+                drawBead(iterator % gridSizeX, Math.floor(iterator / gridSizeX), "e");
 			}
 			if(map[iterator] === "o"){
                 victoryArray.push([iterator % gridSizeX, Math.floor(iterator / gridSizeX)]);
+                drawBead(iterator % gridSizeX, Math.floor(iterator / gridSizeX), "o");
 			}
 		}
+
+		for(iterator = 0; iterator < lightArray.length; iterator++){
+			drawBead(lightArray[iterator] % gridSizeX, Math.floor(lightArray[iterator] / gridSizeX), "l");
+		}
+
         for(iterator = 0; iterator < map.length; iterator++) {
             if (map[iterator] === "e") {
                 return iterateNeighbors([iterator % gridSizeX, Math.floor(iterator / gridSizeX)]);
@@ -409,8 +435,14 @@ var G = (function () {
 	function placeLight(){
 		if(lightFlag) {
             lightFlag = false;
+            maxLightCounter -= 1;
+            PS.statusText("Trailblazer - L to place light: " + (maxLights - maxLightCounter) + " left.");
         } else if(!lightFlag){
-			lightFlag = true;
+			if(maxLightCounter < maxLights) {
+                lightFlag = true;
+                maxLightCounter += 1;
+                PS.statusText("Trailblazer - L to place light: " + (maxLights - maxLightCounter) + " left.");
+            }
 		}
 	}
 
@@ -433,7 +465,8 @@ var G = (function () {
 
         for(yIt = 0; yIt < gridSizeY; yIt++){
             for(xIt = 0; xIt < gridSizeX; xIt++){
-                drawBead(xIt, yIt, map[counter]);
+            	drawBead(xIt, yIt, "b");
+                //drawBead(xIt, yIt, map[counter]);
                 counter++;
             }
         }
@@ -444,6 +477,8 @@ var G = (function () {
 				counter2++;
 			}
 		}
+
+		lightArray.push(getPlayerPos());
 
 		for(iterator = 0; iterator < lightArray.length; iterator++){
 			arrayHolder = [lightArray[iterator] % gridSizeX, Math.floor(lightArray[iterator] / gridSizeY)];
@@ -468,14 +503,14 @@ var G = (function () {
                 	break;
 				}
 
-                if ((lightArray[iterator] - (3 * gridSizeX)) >= 0 && (PS.data((lightArray[iterator] - (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] - (3 * gridSizeX)) / gridSizeY)) === "r")) {
+                /*if ((lightArray[iterator] - (3 * gridSizeX)) >= 0 && (PS.data((lightArray[iterator] - (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] - (3 * gridSizeX)) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] - (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] - (3 * gridSizeX)) / gridSizeY), "p");
 
                     arrayHolder = [(lightArray[iterator] - (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] - (3 * gridSizeX)) / gridSizeY)];
                     victoryArray.push(arrayHolder);
                 } else{
                 	break;
-				}
+				}*/
                 break;
             }
 
@@ -498,14 +533,14 @@ var G = (function () {
                     break;
                 }
 
-                if ((lightArray[iterator] % gridSizeX) > 2 && (PS.data((lightArray[iterator] - 3) % gridSizeX, Math.floor((lightArray[iterator] - 1) / gridSizeY)) === "r")) {
+                /*if ((lightArray[iterator] % gridSizeX) > 2 && (PS.data((lightArray[iterator] - 3) % gridSizeX, Math.floor((lightArray[iterator] - 1) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] - 3) % gridSizeX, Math.floor((lightArray[iterator] - 1) / gridSizeY), "p");
 
                     arrayHolder = [(lightArray[iterator] - 3) % gridSizeX, Math.floor((lightArray[iterator] - 1) / gridSizeY)];
                     victoryArray.push(arrayHolder);
                 } else{
                     break;
-                }
+                }*/
                 break;
             }
 
@@ -528,14 +563,14 @@ var G = (function () {
                     break;
                 }
 
-                if ((lightArray[iterator] + (3 * gridSizeX)) < (gridSizeX * gridSizeY) && (PS.data((lightArray[iterator] + (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] + (3 * gridSizeX)) / gridSizeY)) === "r")) {
+                /*if ((lightArray[iterator] + (3 * gridSizeX)) < (gridSizeX * gridSizeY) && (PS.data((lightArray[iterator] + (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] + (3 * gridSizeX)) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] + (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] + (3 * gridSizeX)) / gridSizeY), "p");
 
                     arrayHolder = [(lightArray[iterator] + (3 * gridSizeX)) % gridSizeX, Math.floor((lightArray[iterator] + (3 * gridSizeX)) / gridSizeY)];
                     victoryArray.push(arrayHolder);
                 } else{
                     break;
-                }
+                }*/
                 break;
             }
 
@@ -556,14 +591,14 @@ var G = (function () {
                 } else{
                     break;
                 }
-                if ((lightArray[iterator] % gridSizeX) < (gridSizeX - 3) && (PS.data((lightArray[iterator] + 3) % gridSizeX, Math.floor((lightArray[iterator] + 1) / gridSizeY)) === "r")) {
+                /*if ((lightArray[iterator] % gridSizeX) < (gridSizeX - 3) && (PS.data((lightArray[iterator] + 3) % gridSizeX, Math.floor((lightArray[iterator] + 1) / gridSizeY)) === "r")) {
                     drawBead((lightArray[iterator] + 3) % gridSizeX, Math.floor((lightArray[iterator] + 1) / gridSizeY), "p");
 
                     arrayHolder = [(lightArray[iterator] + 3) % gridSizeX, Math.floor((lightArray[iterator] + 1) / gridSizeY)];
                     victoryArray.push(arrayHolder);
                 } else{
                     break;
-                }
+                }*/
                 break;
             }
 		}
@@ -609,16 +644,33 @@ var G = (function () {
                 break;
 		}
 		redrawLight();
-        drawBead(getPlayerPos() % gridSizeX, Math.floor(getPlayerPos()/gridSizeY), "s");
         if(isVictorious()){
-        	PS.debug("VICTORY");
+        	currentMap++;
+			if(currentMap < mapArray.length){
+				gridSizeX = sizeArray[currentMap][0];
+				gridSizeY = sizeArray[currentMap][1];
+
+				maxLightCounter = 0;
+				maxLights = maxLightArray[currentMap];
+
+				test = mapArray[currentMap];
+
+                G.init(systemVar, optionsVar);
+			}
+			if(currentMap === mapArray.length){
+				PS.statusText("VICTORY!!!!!!");
+			}
 		}
+        drawBead(getPlayerPos() % gridSizeX, Math.floor(getPlayerPos()/gridSizeY), "s");
 	}
 
 	var exports = {
 
         init: function(system, options) {
-            PS.gridSize(8, 8);
+        	systemVar = system;
+        	optionsVar = options;
+            PS.gridSize(gridSizeX, gridSizeY);
+            PS.statusText("Trailblazer - L to place light: " + maxLights + " left.");
 
 			map = test.split(" ");
 
