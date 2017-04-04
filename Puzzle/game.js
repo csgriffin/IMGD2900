@@ -285,10 +285,14 @@ var G = (function () {
             	return true;
 			}
 		}
+
+        PS.audioPlay("fx_click");
 		return false;
 	}
 
 	function moveTo(startPos, destinationPos){
+        PS.audioPlay("fx_click");
+
         map[startPos] = "r";
         if(victoryFlag){
             map[startPos] = "v";
@@ -433,15 +437,17 @@ var G = (function () {
 	}
 
 	function placeLight(){
+        PS.audioPlay("fx_click");
+
 		if(lightFlag) {
             lightFlag = false;
             maxLightCounter -= 1;
-            PS.statusText("Trailblazer - L to place light: " + (maxLights - maxLightCounter) + " left.");
+            PS.statusText("Trailblazer - R to place light: " + (maxLights - maxLightCounter) + " left.");
         } else if(!lightFlag){
 			if(maxLightCounter < maxLights) {
                 lightFlag = true;
                 maxLightCounter += 1;
-                PS.statusText("Trailblazer - L to place light: " + (maxLights - maxLightCounter) + " left.");
+                PS.statusText("Trailblazer - R to place light: " + (maxLights - maxLightCounter) + " left.");
             }
 		}
 	}
@@ -645,6 +651,8 @@ var G = (function () {
 		}
 		redrawLight();
         if(isVictorious()){
+        	PS.audioPlay("fx_click");
+
         	currentMap++;
 			if(currentMap < mapArray.length){
 				gridSizeX = sizeArray[currentMap][0];
@@ -670,7 +678,8 @@ var G = (function () {
         	systemVar = system;
         	optionsVar = options;
             PS.gridSize(gridSizeX, gridSizeY);
-            PS.statusText("Trailblazer - L to place light: " + maxLights + " left.");
+            PS.statusText("Trailblazer - R to place light: " + maxLights + " left.");
+            PS.gridColor(G_COLOR_WALL);
 
 			map = test.split(" ");
 
@@ -691,7 +700,7 @@ var G = (function () {
                 case PS.KEY_ARROW_LEFT:
                     movePlayer(3);
                     break;
-				case 108:
+				case 114:
 					placeLight();
 
 			}
