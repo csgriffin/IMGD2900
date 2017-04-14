@@ -43,8 +43,15 @@ PS.init = function( system, options ) {
 	// the initial dimensions you want (32 x 32 maximum)
 	// Do this FIRST to avoid problems!
 	// Otherwise you will get the default 8x8 grid
-
-	G.init(system, options);
+    if ( db ) {
+        db = PS.dbInit( db, { login : G.finalize } );
+        if ( db === PS.ERROR ) {
+            db = null;
+        }
+    }
+    else {
+        G.finalize();
+    }
 
 	// Add any other initialization code you need here
 };
@@ -134,6 +141,8 @@ PS.keyDown = function( key, shift, ctrl, options ) {
 	// Uncomment the following line to inspect parameters
 	//	PS.debug( "DOWN: key = " + key + ", shift = " + shift + "\n" );
 
+	G.keyDown(key, shift, ctrl, options);
+
 	// Add code here for when a key is pressed
 };
 
@@ -191,67 +200,121 @@ PS.swipe = function( data, options ) {
 
 PS.shutdown = function( options ) {
 
+    PS.shutdown = function( options ) {
+        if ( db && PS.dbValid( db ) ) {
+            PS.dbEvent( db, "shutdown", true );
+            PS.dbSend( db, "csgriffin", { discard : true } );
+        }
+    };
+
 	// Add code here for when Perlenspiel is about to close
 };
+
+var db = null;
 
 var G = (function(){
 	var gridSizeX = 16;
 	var gridSizeY = 16;
+
+	var reqVic = 0;
+	var curVic = 0;
+
+	var mapNumber = 4;
+	var currentMap = 0;
+	var mapArray = ["f f f f s f f f " +
+		"f f f f f f f f " +
+   	"f f f f f f f f " +
+	"f f f f o f f f " +
+    "f f f f f f f f " +
+    "f f f f v f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f ",
+
+        "f f f f s f f f " +
+        "f f f f f f f f " +
+        "f f f f f f f f " +
+        "v f f f o f f v " +
+        "f f f f f f f f " +
+        "f f f f v f f f " +
+        "f f f f f f f f " +
+        "f f f f f f f f ",
+
+        "f f f f s f f f " +
+        "f f f f f f f f " +
+        "f f f f f f f f " +
+        "v f f f o f f v " +
+        "f f f f f f f f " +
+        "f f f f f f f f " +
+        "f f v f o f v f " +
+        "f f f f f f f f ",
+
+		"f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f s f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f v f f f f f f " +
+    "f f f f f f o f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f o f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f o f f f v f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f o f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f " +
+    "f f f f f f f f "];
+	var mapSizeArray = [[8, 8], [8, 8], [8, 8], [16, 16]];
 
 	const G_COLOR_BLACK = [0, 0, 0];
 	const G_COLOR_WHITE = [255, 255, 255];
 	const G_COLOR_GRAY = [125, 125, 125];
 	const G_COLOR_RED = [255, 0, 0];
 
-	const TESTMAP = "f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f s f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f v f f f f f f " +
-					"f f f f f f o f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f o f f f v f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f o f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f " +
-					"f f f f f f f f "
+	const G_COLOR_OBELISK = [39, 39, 39];
+	const G_COLOR_OBTRAIL = [90, 90, 90];
 
-	function setupMap(inputMap){
+	function setupMap(){
 		var xIt;
 		var yIt;
 
+		reqVic = 0;
+
 		var count = 0;
-		var tempMap = inputMap.split(" ");
+
+		gridSizeX = mapSizeArray[currentMap][0];
+		gridSizeY = mapSizeArray[currentMap][1];
+
+		PS.gridSize(gridSizeX, gridSizeY);
+
+		var tempMap = mapArray[currentMap].split(" ");
 
 		for(yIt = 0; yIt < gridSizeY; yIt++){
 			for(xIt = 0; xIt < gridSizeX; xIt++){
 				//Data, isVictoryPoint, isPlayer
 				PS.data(xIt, yIt, [tempMap[count], false, false]);
 				if(tempMap[count] === "v"){
-					PS.data(xIt, yIt, ["f", true, false]);
+					PS.data(xIt, yIt, ["v", true, false]);
+					reqVic++;
 				}
 				if(tempMap[count] === "s"){
-					PS.data(xIt, yIt, ["f", false, true]);
+					PS.data(xIt, yIt, ["s", false, true]);
 				}
 				count++;
 			}
@@ -264,49 +327,287 @@ var G = (function(){
 		var xIt;
 		var yIt;
 
+		curVic = 0;
+
 		for(yIt = 0; yIt < gridSizeY; yIt++){
 			for(xIt = 0; xIt < gridSizeX; xIt++){
 				drawBead(xIt, yIt);
-				if(PS.data(xIt, yIt) === "s"){
-					findObelisks(x, y);
-				}
 			}
 		}
+
+        for(yIt = 0; yIt < gridSizeY; yIt++){
+            for(xIt = 0; xIt < gridSizeX; xIt++){
+                if(PS.data(xIt, yIt)[0] === "s"){
+                    findObelisks(xIt, yIt);
+                }
+            }
+        }
 	}
 
 	function findObelisks(x, y){
+		if(x + 1 < gridSizeX) {
+            if (PS.data(x + 1, y)[0] === "o") {
+				drawObelisks(x + 1, y);
+            }
+        }
 
+        if(x - 1 >= 0) {
+            if (PS.data(x - 1, y)[0] === "o") {
+                drawObelisks(x - 1, y);
+            }
+        }
+
+        if(y + 1 < gridSizeY) {
+            if (PS.data(x, y + 1)[0] === "o") {
+                drawObelisks(x, y + 1);
+            }
+        }
+
+        if(y - 1 >= 0) {
+            if (PS.data(x, y - 1)[0] === "o") {
+                drawObelisks(x, y - 1);
+            }
+        }
 	}
 
 	function drawObelisks(x, y){
+        if(x + 1 < gridSizeX) {
+            if (PS.data(x + 1, y)[0] === "f") {
+                finishDrawing(x + 1, y, 1);
+            }
+        }
 
+        if(x - 1 >= 0) {
+            if (PS.data(x - 1, y)[0] === "f") {
+                finishDrawing(x - 1, y, 3);
+            }
+        }
+
+        if(y + 1 < gridSizeY) {
+            if (PS.data(x, y + 1)[0] === "f") {
+                finishDrawing(x, y + 1, 2);
+            }
+        }
+
+        if(y - 1 >= 0) {
+            if (PS.data(x, y - 1)[0] === "f") {
+                finishDrawing(x, y - 1, 0);
+            }
+        }
+	}
+
+	function finishDrawing(x, y, direction){
+        PS.color(x, y, G_COLOR_OBTRAIL);
+
+        switch(direction){
+			case 0:
+                if(y - 1 >= 0) {
+                    if (PS.data(x, y - 1)[0] === "f") {
+                        finishDrawing(x, y - 1, 0);
+                    }
+                    if (PS.data(x, y - 1)[0] === "v") {
+                        curVic++;
+                        finishDrawing(x, y - 1, 0);
+                    }
+                    if (PS.data(x, y - 1)[0] === "o") {
+						finishDrawing(x, y - 1, 1);
+						finishDrawing(x, y - 1, 3);
+						drawBead(x, y - 1);
+					}
+                }
+				break;
+			case 1:
+                if(x + 1 < gridSizeX) {
+                    if (PS.data(x + 1, y)[0] === "f") {
+                        finishDrawing(x + 1, y, 1);
+                    }
+                    if (PS.data(x + 1, y)[0] === "v") {
+                        curVic++;
+                        finishDrawing(x + 1, y, 1);
+                    }
+                    if (PS.data(x + 1, y)[0] === "o") {
+                        finishDrawing(x + 1, y, 0);
+                        finishDrawing(x + 1, y, 2);
+                        drawBead(x + 1, y);
+                    }
+                }
+				break;
+			case 2:
+                if(y + 1 < gridSizeY) {
+                    if (PS.data(x, y + 1)[0] === "f") {
+                        finishDrawing(x, y + 1, 2);
+                    }
+                    if (PS.data(x, y + 1)[0] === "v") {
+                        curVic++;
+                        finishDrawing(x, y + 1, 2);
+                    }
+                    if (PS.data(x, y + 1)[0] === "o") {
+                        finishDrawing(x, y + 1, 1);
+                        finishDrawing(x, y + 1, 3);
+                        drawBead(x, y + 1);
+                    }
+                }
+				break;
+			case 3:
+                if(x - 1 >= 0) {
+                    if (PS.data(x - 1, y)[0] === "f") {
+                        finishDrawing(x - 1, y, 3);
+                    }
+                    if (PS.data(x - 1, y)[0] === "v") {
+                        curVic++;
+                        finishDrawing(x - 1, y, 3);
+                    }
+                    if (PS.data(x - 1, y)[0] === "o") {
+                        finishDrawing(x - 1, y, 0);
+                        finishDrawing(x - 1, y, 2);
+                        drawBead(x - 1, y);
+                    }
+                }
+				break;
+		}
 	}
 
 	function drawBead(x, y){
 		switch(PS.data(x, y)[0]){
 			case "f":
 				PS.color(x, y, G_COLOR_WHITE);
+				PS.border(x, y, 0);
 				break;
 			case "v":
-				PS.color(x, y, G_COLOR_GRAY);
+				PS.color(x, y, G_COLOR_WHITE);
+				PS.border(x, y, 3);
 				break;
 			case "s":
-				PS.color(x, y, G_COLOR_RED);
+				PS.color(x, y, G_COLOR_GRAY);
+                PS.border(x, y, 0);
 				break;
 			case "o":
-				PS.color(x, y, G_COLOR_BLACK);
+				PS.color(x, y, G_COLOR_OBELISK);
+                PS.border(x, y, 0);
 				break;
 		}
 	}
 
+	function declareVictory(){
+		if(curVic === reqVic){
+			return true;
+		}
+	}
+
+	function movePlayer(direction){
+		var xIt;
+		var yIt;
+
+        for(yIt = 0; yIt < gridSizeY; yIt++){
+            for(xIt = 0; xIt < gridSizeX; xIt++){
+                if(PS.data(xIt, yIt)[0] === "s"){
+                    switch(direction){
+						case 0:
+                            if(yIt - 1 >= 0) {
+                                if (PS.data(xIt, yIt - 1)[0] === "f") {
+                                	PS.data(xIt, yIt - 1, ["s", false, true]);
+                                	PS.data(xIt, yIt, ["f", false, false]);
+                                }
+                            }
+							break;
+						case 1:
+                            if(xIt + 1 < gridSizeX) {
+                                if (PS.data(xIt + 1, yIt)[0] === "f") {
+                                    PS.data(xIt + 1, yIt, ["s", false, true]);
+                                    PS.data(xIt, yIt, ["f", false, false]);
+                                }
+                            }
+							break;
+						case 2:
+                            if(yIt + 1 < gridSizeY) {
+                                if (PS.data(xIt, yIt + 1)[0] === "f") {
+                                    PS.data(xIt, yIt + 1, ["s", false, true]);
+                                    PS.data(xIt, yIt, ["f", false, false]);
+                                }
+                            }
+							break;
+						case 3:
+                            if(xIt - 1 >= 0) {
+                                if (PS.data(xIt - 1, yIt)[0] === "f") {
+                                    PS.data(xIt - 1, yIt, ["s", false, true]);
+                                    PS.data(xIt, yIt, ["f", false, false]);
+                                }
+                            }
+							break;
+					}
+					redrawMap();
+                    if(declareVictory()){
+                    	doVictory();
+					}
+					return;
+                }
+            }
+        }
+	}
+
+	function doVictory(){
+        var gridSizeX = 16;
+        var gridSizeY = 16;
+
+        var reqVic = 0;
+        var curVic = 0;
+
+        currentMap++;
+
+        if ( db && PS.dbValid( db ) ) {
+            PS.dbEvent( db, "Level completion", currentMap ); // val can be anything
+        }
+
+        if(currentMap < mapNumber) {
+        	setupMap();
+        } else{
+            PS.statusText("Victory");
+            if ( db && PS.dbValid( db ) ) {
+                PS.dbEvent( db, "gameover", true );
+                PS.dbSend( db, "csgriffin", { discard : true } );
+                db = null;
+            }
+		}
+	}
+
 	var exports = {
+		finalize: function(){
+			G.init(0, 0);
+		},
+
 		init: function(system, options){
 			PS.gridSize(gridSizeX, gridSizeY);
-			setupMap(TESTMAP);
+			PS.statusText("Arrow keys to move");
+			setupMap();
 		},
 
 		keyDown: function(key, shift, ctrl, options){
-
+			switch(key){
+				case PS.KEY_ARROW_LEFT:
+					movePlayer(3);
+					break;
+                case PS.KEY_ARROW_RIGHT:
+                	movePlayer(1);
+                    break;
+                case PS.KEY_ARROW_UP:
+                	movePlayer(0);
+                    break;
+                case PS.KEY_ARROW_DOWN:
+                	movePlayer(2);
+                    break;
+                case 97:
+                    movePlayer(3);
+                    break;
+                case 100:
+                    movePlayer(1);
+                    break;
+                case 119:
+                    movePlayer(0);
+                    break;
+                case 115:
+                    movePlayer(2);
+                    break;
+			}
 		}
 	};
 
