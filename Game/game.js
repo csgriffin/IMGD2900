@@ -203,7 +203,7 @@ PS.shutdown = function( options ) {
     PS.shutdown = function( options ) {
         if ( db && PS.dbValid( db ) ) {
             PS.dbEvent( db, "shutdown", true );
-            PS.dbSend( db, "csgriffin", { discard : true } );
+            PS.dbSend( db, "bmoriarty", { discard : true } );
         }
     };
 
@@ -218,6 +218,8 @@ var G = (function(){
 
 	var reqVic = 0;
 	var curVic = 0;
+
+	var timer;
 
 	var mapNumber = 4;
 	var currentMap = 0;
@@ -545,29 +547,41 @@ var G = (function(){
         }
 	}
 
-	function doVictory(){
-        var gridSizeX = 16;
-        var gridSizeY = 16;
+	var isWinning = false;
 
-        var reqVic = 0;
-        var curVic = 0;
+	function doVictory() {
+        if (!isWinning) {
+            isWinning = true;
 
-        currentMap++;
+            var gridSizeX = 16;
+            var gridSizeY = 16;
 
-        if ( db && PS.dbValid( db ) ) {
-            PS.dbEvent( db, "Level completion", currentMap ); // val can be anything
-        }
+            var reqVic = 0;
+            var curVic = 0;
 
-        if(currentMap < mapNumber) {
-        	setupMap();
-        } else{
-            PS.statusText("Victory");
-            if ( db && PS.dbValid( db ) ) {
-                PS.dbEvent( db, "gameover", true );
-                PS.dbSend( db, "csgriffin", { discard : true } );
-                db = null;
+            currentMap++;
+
+            if (db && PS.dbValid(db)) {
+                PS.dbEvent(db, "Level completion", currentMap); // val can be anything
             }
-		}
+
+            timer = PS.timerStart(60,
+                function endMap() {
+                    if (currentMap < mapNumber) {
+                        setupMap();
+                    } else {
+                        PS.statusText("Victory");
+                        if (db && PS.dbValid(db)) {
+                            PS.dbEvent(db, "gameover", true);
+                            PS.dbSend(db, "bmoriarty", {discard: true});
+                            db = null;
+                        }
+                    }
+
+                    isWinning = false;
+                    PS.timerStop(timer);
+                });
+        }
 	}
 
 	var exports = {
