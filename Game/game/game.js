@@ -322,7 +322,7 @@ var G = (function(){
         "f f f f f f f f f f f f f f f f " +
         "f f f f f f f f f f f f f f f f " +
         "f f f f f f f f f v f f f o f f " +
-        "f f o f f o f f f f f f f o f f " +
+        "f f f f f o f f f f f f f o f f " +
         "f f f f f f f f f f f f f f f f " +
         "f f f f f f f f f f f f f f f f " +
         "f f o f f o f f f o f f f f f f " +
@@ -364,9 +364,6 @@ var G = (function(){
         "f f f o f f f f f f o f f f f f " +
         "f f f f f f f f f f f f f f f f "];
 	var mapSizeArray = [[9, 9], [9, 9], [9, 9], [9, 9], [14, 14], [14, 14], [16, 16], [16, 16], [16, 16], [16, 16]];
-
-	var mapWhereToArray = [[0, 1, 2, 3, 4], [1, 5, 2, 0, 4], [2, 1, 2, 3, 4], [3, 1, 2, 3, 4], [4, 1, 2, 3, 4], [5, 1, 2, 3, 4],
-        [6, 1, 2, 3, 4], [7, 1, 2, 3, 4], [8, 1, 2, 3, 4], [9, 1, 2, 3, 4]];
 
 	const G_COLOR_BLACK = [0, 0, 0];
 	const G_COLOR_WHITE = [220, 220, 220];
@@ -464,22 +461,10 @@ var G = (function(){
             if (PS.data(x + 1, y)[0] === "f") {
                 finishDrawing(x + 1, y, 1);
             }
-            if (PS.data(x + 1, y)[0] === "b") {
-                finishDrawing(x + 1, y, 1);
-            }
-            if (PS.data(x + 1, y)[0] === "d") {
-                finishDrawing(x + 1, y, 1);
-            }
         }
 
         if(x - 1 >= 0) {
             if (PS.data(x - 1, y)[0] === "f") {
-                finishDrawing(x - 1, y, 3);
-            }
-            if (PS.data(x - 1, y)[0] === "b") {
-                finishDrawing(x - 1, y, 3);
-            }
-            if (PS.data(x - 1, y)[0] === "d") {
                 finishDrawing(x - 1, y, 3);
             }
         }
@@ -488,22 +473,10 @@ var G = (function(){
             if (PS.data(x, y + 1)[0] === "f") {
                 finishDrawing(x, y + 1, 2);
             }
-            if (PS.data(x, y + 1)[0] === "b") {
-                finishDrawing(x, y + 1, 2);
-            }
-            if (PS.data(x, y + 1)[0] === "d") {
-                finishDrawing(x, y + 1, 2);
-            }
         }
 
         if(y - 1 >= 0) {
             if (PS.data(x, y - 1)[0] === "f") {
-                finishDrawing(x, y - 1, 0);
-            }
-            if (PS.data(x, y - 1)[0] === "b") {
-                finishDrawing(x, y - 1, 0);
-            }
-            if (PS.data(x, y - 1)[0] === "d") {
                 finishDrawing(x, y - 1, 0);
             }
         }
@@ -523,12 +496,6 @@ var G = (function(){
                     if (PS.data(x, y - 1)[0] === "f") {
                         finishDrawing(x, y - 1, 0);
                     }
-                    if (PS.data(x, y - 1)[0] === "b") {
-                        finishDrawing(x, y - 1, 0);
-                    }
-                    if (PS.data(x, y - 1)[0] === "d") {
-                        finishDrawing(x, y - 1, 0);
-                    }
                     if (PS.data(x, y - 1)[0] === "v") {
                         curVic++;
                         finishDrawing(x, y - 1, 0);
@@ -539,23 +506,11 @@ var G = (function(){
 						drawBead(x, y - 1);
                         PS.radius(x, y - 1, 0);
 					}
-                    if (PS.data(x, y - 1)[0] === "t") {
-                        finishDrawing(x, y - 1, 0);
-                    }
-                    if (PS.data(x, y - 1)[0] === "p") {
-                        finishDrawing(x, y - 1, 0);
-                    }
                 }
 				break;
 			case 1:
                 if(x + 1 < gridSizeX) {
                     if (PS.data(x + 1, y)[0] === "f") {
-                        finishDrawing(x + 1, y, 1);
-                    }
-                    if (PS.data(x + 1, y)[0] === "b") {
-                        finishDrawing(x + 1, y, 1);
-                    }
-                    if (PS.data(x + 1, y)[0] === "d") {
                         finishDrawing(x + 1, y, 1);
                     }
                     if (PS.data(x + 1, y)[0] === "v") {
@@ -568,23 +523,11 @@ var G = (function(){
                         drawBead(x + 1, y);
                         PS.radius(x + 1, y, 0);
                     }
-                    if (PS.data(x, y - 1)[0] === "t") {
-                        finishDrawing(x, y - 1, 0);
-                    }
-                    if (PS.data(x, y - 1)[0] === "p") {
-                        finishDrawing(x, y - 1, 0);
-                    }
                 }
 				break;
 			case 2:
                 if(y + 1 < gridSizeY) {
                     if (PS.data(x, y + 1)[0] === "f") {
-                        finishDrawing(x, y + 1, 2);
-                    }
-                    if (PS.data(x, y + 1)[0] === "b") {
-                        finishDrawing(x, y + 1, 2);
-                    }
-                    if (PS.data(x, y + 1)[0] === "d") {
                         finishDrawing(x, y + 1, 2);
                     }
                     if (PS.data(x, y + 1)[0] === "v") {
@@ -597,23 +540,11 @@ var G = (function(){
                         drawBead(x, y + 1);
                         PS.radius(x, y + 1, 0);
                     }
-                    if (PS.data(x, y - 1)[0] === "t") {
-                        finishDrawing(x, y - 1, 0);
-                    }
-                    if (PS.data(x, y - 1)[0] === "p") {
-                        finishDrawing(x, y - 1, 0);
-                    }
                 }
 				break;
 			case 3:
                 if(x - 1 >= 0) {
                     if (PS.data(x - 1, y)[0] === "f") {
-                        finishDrawing(x - 1, y, 3);
-                    }
-                    if (PS.data(x - 1, y)[0] === "b") {
-                        finishDrawing(x - 1, y, 3);
-                    }
-                    if (PS.data(x - 1, y)[0] === "d") {
                         finishDrawing(x - 1, y, 3);
                     }
                     if (PS.data(x - 1, y)[0] === "v") {
@@ -625,12 +556,6 @@ var G = (function(){
                         finishDrawing(x - 1, y + 1, 2);
                         drawBead(x - 1, y);
                         PS.radius(x - 1, y, 0);
-                    }
-                    if (PS.data(x, y - 1)[0] === "t") {
-                        finishDrawing(x, y - 1, 0);
-                    }
-                    if (PS.data(x, y - 1)[0] === "p") {
-                        finishDrawing(x, y - 1, 0);
                     }
                 }
 				break;
@@ -644,16 +569,6 @@ var G = (function(){
 				PS.border(x, y, 0);
                 PS.radius(x, y, 0);
 				break;
-            case "b":
-                PS.color(x, y, G_COLOR_WHITE);
-                PS.border(x, y, 0);
-                PS.radius(x, y, 0);
-                break;
-            case "d":
-                PS.color(x, y, G_COLOR_WHITE);
-                PS.border(x, y, 0);
-                PS.radius(x, y, 0);
-                break;
 			case "v":
 				PS.color(x, y, G_COLOR_WHITE);
 				PS.border(x, y, 3);
@@ -672,15 +587,6 @@ var G = (function(){
 				break;
             case "w":
                 PS.color(x, y, G_COLOR_RED);
-                PS.border(x, y, 0);
-                PS.radius(x, y, 0);
-            case "t":
-                PS.color(x, y, G_COLOR_RED);
-                PS.border(x, y, 0);
-                PS.radius(x, y, 0);
-                break;
-            case "p":
-                PS.color(x, y, G_COLOR_BLACK);
                 PS.border(x, y, 0);
                 PS.radius(x, y, 0);
 		}
@@ -706,18 +612,6 @@ var G = (function(){
                                 	PS.data(xIt, yIt - 1, ["s", false, true]);
                                 	PS.data(xIt, yIt, ["f", false, false]);
                                 }
-                                if (PS.data(xIt, yIt - 1)[0] === "b") {
-                                    PS.data(xIt, yIt - 1, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["b", false, false]);
-                                }
-                                if (PS.data(xIt, yIt - 1)[0] === "d") {
-                                    PS.data(xIt, yIt - 1, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["d", false, false]);
-                                }
-                            } else{
-                                currentMap = mapWhereToArray[currentMap][1];
-
-                                setupMap();
                             }
 							break;
 						case 1:
@@ -726,18 +620,6 @@ var G = (function(){
                                     PS.data(xIt + 1, yIt, ["s", false, true]);
                                     PS.data(xIt, yIt, ["f", false, false]);
                                 }
-                                if (PS.data(xIt + 1, yIt)[0] === "b") {
-                                    PS.data(xIt + 1, yIt, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["b", false, false]);
-                                }
-                                if (PS.data(xIt + 1, yIt)[0] === "d") {
-                                    PS.data(xIt + 1, yIt, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["d", false, false]);
-                                }
-                            } else{
-                                currentMap = mapWhereToArray[currentMap][2];
-
-                                setupMap();
                             }
 							break;
 						case 2:
@@ -746,18 +628,6 @@ var G = (function(){
                                     PS.data(xIt, yIt + 1, ["s", false, true]);
                                     PS.data(xIt, yIt, ["f", false, false]);
                                 }
-                                if (PS.data(xIt, yIt + 1)[0] === "b") {
-                                    PS.data(xIt, yIt + 1, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["b", false, false]);
-                                }
-                                if (PS.data(xIt, yIt + 1)[0] === "d") {
-                                    PS.data(xIt, yIt + 1, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["d", false, false]);
-                                }
-                            } else{
-                                currentMap = mapWhereToArray[currentMap][3];
-
-                                setupMap();
                             }
 							break;
 						case 3:
@@ -766,18 +636,6 @@ var G = (function(){
                                     PS.data(xIt - 1, yIt, ["s", false, true]);
                                     PS.data(xIt, yIt, ["f", false, false]);
                                 }
-                                if (PS.data(xIt - 1, yIt)[0] === "b") {
-                                    PS.data(xIt - 1, yIt, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["b", false, false]);
-                                }
-                                if (PS.data(xIt - 1, yIt)[0] === "d") {
-                                    PS.data(xIt - 1, yIt, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["d", false, false]);
-                                }
-                            } else{
-                                currentMap = mapWhereToArray[currentMap][4];
-
-                                setupMap();
                             }
 							break;
 					}
