@@ -218,9 +218,9 @@ var G = (function(){
 
     var trailArray = [];
 
-    const maxDeathCounter = 10;
+    const maxDeathCounter = 255;
 
-    var deathCounter = 10;
+    var deathCounter = 255;
     var pickupCounter = 0;
 
 	var reqVic = 0;
@@ -228,161 +228,163 @@ var G = (function(){
 
 	var timer;
 
-	var mapNumber = 10;
+	var mapNumber = 70;
 	var currentMap = 0;
-	var mapArray = [
-        "f f f w w v f w f " +
-        "f w f f f f f f f " +
-        "v o f f f o f f f " +
-        "f f f f f f f f f " +
-        "f f f f f f f f f " +
-        "f v f f o f f v f " +
-        "f f f f f f f f f " +
-        "f f f f f f f f f " +
-        "f f f f f f z z z ",
+	var mapArray = ["p p p p p p p p p p p p w w w w p p p p p p p p p p f f w w w w p p p p p p p p p p f f w w w w p p p p p p p p f f f f f f f f p p p p p p p p f f f f f f f f p p p p p p f f f d b d f f f f p p p p p p f f f f f f f f f f p p p p f f f f f f f f f f f f p p p f f f f f f f f f f f f f p p p f f f f f f f f f f f f f p f f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f w p f f f f f f f f f f f f w f f p f f f f f f f f f f f f f f f p f f f f f f f f f f f f w f w",
+    "w w w w w w w w w w w w w w w w w w w f f f f f f f f f f f w w w w w f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f d f b f b f f f f f f f f w f f f b f b f b f f f f f f f w f f f d f b f b f f f f f f f w f f f f f d f d f d f f f f f w f f f f f f f f f b f f f f f w f f d f b f b f f f f f f f f w f f f f d f d f f f f f f f f w f f f f f f f f f f f f f f f w w f f f f f f f f f f f f f f w f w f f f f f f f f f f f f w w w w w w w w w w w w w w w w w w",
+    "w w w w w w w w t t t t t w w w w w f f f f f f f f f f f f w w w f f o f f o f f o f f f f f w w f f t f f f f f f f f f f f w w f t o t f f f f f f f f f v f w f f t f f f f f f f f f w w f w f f f f f f f f f f f f w w f w f f f f f o f f f f f f v t w w f f f f f f f f f f f f f f w w f f f f f f f f f f f f f f w w f f t f f f f f f f f f f f w w f t o t f f f f w f f f f f w w f f t f f f f f w f f f f f w w f f o f f o f f f f f f f f w w w f f f f f f f f f f f f w w w w w w w w w f f f f f w w w w",
+    "w w w w w w w w w w w w w w w w w w d f f f f f f f f f f d w w w d w f f f f f f f f f f o d w f f f f f f f d w f f f f f f f f f f w w w d d w f f f f f f f f f f w w d w d d f f f f f f f f f f w w d d w w f f f f f f f w f f f f f f f f f f f f f f f w f w d f f f f f f f f f f f f w f d d f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w d o f f f f f f f f f f o d w w w d f f f f f f f f f f d w w w w w w w w w w w w w w w w w w",
+    "w w w w w w w w w w w w w w w w w w d f f f f f f f f f f d w w w d o f f o f f f f o f f o d w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f o f f v w w w w v f f o f f f f f f f w f f f f w f f f f f f f f f f w f d z f w f f f f f f f f f f w f d d f w f f f f f f f f f f w f f f f w f f f f f f f o f f v w w w w v f f o f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w d o f f o f f f f o f f o d w w w d f f f f f f f f f f d w w w w w w w w w f f w w w w w w w",
+    "w w w w w w w w w w w w w w w w w w d f f f f f f f f f f d w w w d o f f f f f f f f f f o d w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w d o f f f f f f f f f f o d w w w d f f f f f f f f f f d w w w w w w w w w w w w w w w w w w",
+    "w w w w w w w w w w w w w w w w w w d f f f f f f f f f f d w w w d o f f f f f f f f f f o d w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w d o f f f f f f f f f f o d w w w d f f f f f f f f f f d w w w w w w w w w w w w w w w w w w",
+    "w w w w w w w w w w w w w w w w w w d f f f f f f f f f f d w w w d o f f f f f f f f f f o d w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f d d f f f f f f f f f f f f f f w w f f f f f f f f f f f f f f f f f f f w d f f f f f f f f f f d w w f w d f f f f f f f f w d d w w f f f f f f f f f f f d w d w w f f f f f f f f w d o f f f f f f f f f f o d w w w d f f f w w f f f f f d w w w w w w w w d d f f f w w w w w",
+        "w w w w w w w w w w w w w w w w w w d f f f f f f f f f f d w w w d o f f f f f f f f f f o d w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w d o f f f f f f f f f f o d w w w d f f f f f f f f f f d w w w w w w w w w w w w w w w w w w",
+    "p f f f f f f f f f f f f f w w p f f f f f f f f f f f f f d w p f f w f f f f f f f f f f f f p f f f f f f f f f w f f f f f p f f f f f w f f f f f f f f f p f f f f f f f f f f f f f w f p p f f f f f f f d d w f f f f p p f f f d w f f d w d f f f f p p f f f d w f f d w d f f f f p p f f w f f f f f f f f w f f p p f f f f d d w f d w f f f f p p f f f w d w w f d w f d w d p p p f f f d w w f f f f w w d p p p f w w f f f f w w f w w d p w w w d d f f f f d d f w w w p w w w f f f f f f f f f w w w",
+    "w w w w w w w w w w w w w w w w w w f f f f f f f f f f f d w w f f f f f f f f f f f f f o d w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w",
+    "w w w w w w f f f f f f w w w w w w d f f f f f f f f f f d w w w d o f f f f o f f w f f w d w f f f f f w f f f f f f f d w d f f o f o f f f f o f f f v t f f f f f f f f f f f f f f w w f f f f f f t t f f w w f f w w f f f f f f w o f f f f o f f v f f f f f f w w f f w f f f w w f f f w w f f f f f w f f f w w f f f w w t f f f f f f f f f w f f f w t o f f f f f f t o w f f f f t t t f f f w f f f t f w f f f f f f w f f f f w f t w f f w w f f f f f f f f f f w f w w w w f f f f f f f f f f f f w w",
+    "w w w w w w w w w w w w w w w w w w d f f f f f f f f f f d w w w d o f f f f f f f f f f o d w f f f f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w",
+    "w w w w w w w f f w w w w w w w w w d f f f w f f w f f f d w w w d o f f f v w w v f f f o d w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f p f f f f f f f w f f f f f f p f f f f f f f f w f f f f f f p f f f f f f f f w f f f f f p f f f f f f f f f w w w w p p w w w w w w w w w w w w w p p p w w w w w w w w w w w",
+    "w w w w w w w w w w w w w w w w w w d f o f f f f f f o f d w w w d d f f f f f t f f f f d d w w f f f f f f f o t f o f f o t w f f f f f f f f f f f f f t t w f f f f f f f f f f w f f o f w f f f f f f f f f f f f f w f w f f f f f f f t f f f f f w f w f f f o f f t o f f f f f v f w f f f f f f f t f w f f f w f w f f f f f f f f f f f f f w f w f f f f f f f f f f f f w w f w f f f f f f f f w f f w w w w w f f f f f f f f f f f w w w w w w w w w w w w w w f f w w w w w w w w w w w w w w f f w w w w",
+    "w w w w w w w w w w w w w w w w w w d f f f f f f f f f f d w w w d o f f f f f f f f f f o d w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f o f f f f o f f f f f f f f f f f f f f f f f f f f f w w w w w w f f f f w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w",
+    "w w w w w w w f f f f f w w w w w w d f f f f d w f d w f d w w w d o f f f f w d f d w f w d w f f f f f f f f f f w d f d w d f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w w f f f f f f f f f f f f f f w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w",
+    "w w w p p p p p p p p p p p p p w w d f f p p p p p p p p p p p w d o f f f f f p p p p p p p p f f f f f f f f f p p p p p p p f f f f f f f f f f p p p p p p f f f f f f f f f f p p p p p p f f f f f f f f f f f p p p p p f f f f f f f f f f f p p p p p f f f f f f f f f f f p p p p p f f f f f f f f f f f p p p p p f f f f f f f f f f p p p p p p f f f f f f f f f f p p p p p p f f f f f f f f f f p p p p p p f f f f f f f f f f p p p p p p w w w w w f w f f f p p p p p p w w w w f f f f f f p p p p p p",
+    "p w w w f f f f f f f f w w w w p w w w f f f f f f f f f f w w p p f f w f f f f f f f f f f f p p f f w f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p p f f f f f f f f f f f f f p p p f f f f f f f f f f f f f p p p f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f",
+    "w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w w f f w f f f f f f f f f f f w w w f f f f f f f f f f f f f f w f w f f f f f w f f w w w w w w f w w w w w w f w w w w",
+    "w w f f f f f f f f f f f f w w w w f f f f f f f f f f f f w w f f f f f f f f f f f f f f f f f f w f f f f f f w f f f w f f f f f f f f f f f f f f f f w f f f f f w f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w w w w w w w w w w f f f f f f w w w w w w w w w w f f f w w w",
+    "w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w f f f f f f f f f f f f f f f p f f f f f f o f f w f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f p f f f f f f f f f f f f f f p f f f f f f f f f f f f f f f f f o f f f f f f f f f w f f f w w w w f f f f f f f f f f f f w w w w f f f f f f o f f f f f w w w w f f f f f f f f f f f f w w w w f f f f f f f f f f f f f f f f f f f f d w f f f f f f f f f f f f f f w d w w w w w w w w d w w w w w w f w w w w w w w w w d",
+    "w w p p w w w w w w w w w w w w p p w w w w w w w w w w w w w w p p f f f f f f f f f f f w w w p w f f f f f f f f f f f f w w f w w f f f f f f f f f f f w w f f v f f f f f f f f f o f f w f f w f f f f f f f f w f f f w f f w f f f f f f f f f f f f w w w w f f f f f f f f f f f w f w w w f f f f f f f f f f f w f w w w f f f f f f f f f f f f w w w w f f o f f f f f f o f f w w f f f f f f f f f f f f f f w w f f f f f f f f f f f f f w f f t w w w w w w f f w w w w w w w t w w w w w w f f w w w w w w",
+    "w w w w w w w w w w f f w w w w w w w w w w w f f f f f d w w w w w w w w w d w d d f f w d w w w w w w d f f w d d f f d d w w w w w w d w d d w d f f f f f f w w w w d w d f f f f d f f f f w w w w d f f f f f b d d f f f d d w w d f f f f d d b f f f f w w d d w f f f d b d f f f f f f d w f f f f b d d f f f f f f f w d f f f d d b f f f f w f f d d w f f d b d f f f f f f f f w d w f f d d f f f f w f w d f w w d f f f f f f f f f f w d f w w d f f f f f w w d w f f f f w w w w w t t t w w w w w w w w",
+    "w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w f f f f w w w w w w w w w w w w f f f f w w w w w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f o f f f f o f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f o f f f f o f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w w w f f f f f f f f f f f f w",
+    "w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w f f f f f f f w f f w f f w w w f f f f f f f f w f f w f w f f f f f f f w f f f f w w f f f f f f f f f f f f f f f f w f f f f f f f f f w f f f f f w f f f f f f f w f f f f f w f f w f f f f f f f f f f f f f w f w f f f f f f f f f w f f f w w f f f f f f w w f f w f f w f f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f f w f f f f f f f f f f f f w w f w w f f f f f f f f f f f w w w w w w w w w w f f f f f f w w w w w",
+    "w w w w w f f f f f f p p p p p w f f f f f f f f f f p p p p p w f f f f f f f f f p p p p p p f f f f f f f f f f p p p p p p f f f f f f f p p p p p p p p p f f f f f f f p p p p p p p p p f f f f f p p p p p p p p p p p f f f f f p p p p p p p p p p p f f f f f p p p p p p p p p p p f f f f p p p p p p p p p p p p f f p p p p p p p p p p p p p p f p p p p p p p p p p p p p p p f p p p p p p p p p p p p p p p f p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p",
+    "p p f f f f f f f f f f f f w w p p f f f f f f f f f f f f d w p p f f f f f f f f f f f f d w p p f f f f f f f f f f f f f f p f f f f f f f f f f f f f f f p f f f f f f f f f f f f f f f p f f f f f f f f f f f f f f f p f f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f d w p p f f f f f f f f f f f f d w p p f f f f f f f f f f f f w w p p f f f f f f f f f f f f w w",
+    "w w w w f f w w w w f f w w w w w w f f w w f f f f w w f f w w w f f f w w f f f f f f w f w w f w w f f f f f f w f f f f w w f f f f f f f f f f f f f f w w f f f f f f f f f f f f f f w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w w f f w w w f f w f f f f w w w w w w w w w w f f w f f w w w w w w w w w w w f f w w f w w w w w w w w w w w w w f f w w w w w w w w w w w w f f w f f w w w w w",
+    "w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f f f f d w w w w w f f f f f f f f f f w w w w w d f f f f f f f f f f w w w w w d w w w w w w w w f f w w w w w d w w w w w w w w f f w w w w w w w w w w w w w w f f w w w w w w w w w w w w w w f f w w w w w d w w w w w w w w f f w w w w",
+        "w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f f f f d w w w w w f f f f f f f f f f w w w w w d f f f f f f f f f f w w w w w d w w w w w w w w f f w w w w w d w w w w w w w w f f w w w w w w w w w w w w w w f f w w w w w w w w w w w w w w f f w w w w w d w w w w f f f f f f f f f f",
+    "w w p p w w w w w w w w w w w w p p w w w w w w w w w w w w w w p p f f f f f f f f f f f w w w p w f f f f f f f f f f f f w w f w w f f f f f f f f f f f w w f f v f f f f f f f f f o f f w f f w f f f f f f f f w f f f w f f w f f f f f f f f f f f f w w w w f f f f f f f f f f f w f w w w f f f f f f f f f f f w f w w w f f f f f f f f f f f f w w w w f f o f f f f f f o f f w w f f f f f f f f f f f f f f w w f f f f f f f f f f f f f w f f t w w w w w w f f w w w w w w w t w w w w w w f f w w w w w w",
+        "w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w w w w w w w w w w w f f f w w w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f f f f d w w w w w f f f f f f f f f f w w w w w d f f f f f f f f f f w w w w w d w w w w w w w w f f w w w w w d w w w w w w w w f f w w w w w w w w w w w w w w f f w w w w w w w w w w w w w w f f w w w w w d w w w w f f f f f f f f f f",
+    "w w w f f f f f f f f f d w w w w w w f f o f f f f o f d d w w w w w f f f f f f f f f w d d w w w w f f f f f f f f f d d d w w w w f f f f f f f f f d d w w w w w f f f f f f f f f d d w w w w w f f o f f f f o f d w w w w w w f f f f f f f f f d w w w w w w f f f f f f f f f d w w w d t f f f f f f f f f f f f f w t d f f f f f f f f f f f w w w w w w w f o f f f f o f f w w w w w w w f f f f f f f f f w w w w w w w f f f f f f f f f w w w w w w w f f f f f f f f f w w w w w w w f f f f f f f f f w w w",
+    "w w w w w f f f f f f f w w w w w w w w w f f f f f f f f f w w w w w w w f f f f f f f f f f w w w w w w f f f f f f f f f f f w w w w w f f f f f f f w f f f w w w w w f f f f w f f f f f f w w w w w f f f f f f f f f f f w w w w w f f f f f f f w f f f w w w w w f f f f f f f f f f f w f f f f f f f w w f f f w f f w w w w w w f f f f f f f f f f w w w w w w f f f f f w f f f f w w w w w w f f f f w f f f w f w w w w w w f f f f f f f f f f w w w w w w f f f f f f f f f w w w w w w w f f f f f f f f f w",
+    "w w w w w f f f f f f p p p p p w f f f f f f f f f f p p p p p w f f f f f f f f f p p p p p p f f f f f f f f f f p p p p p p f f f f f f f p p p p p p p p p f f f f f f f p p p p p p p p p f f f f f p p p p p p p p p p p f f f f f p p p p p p p p p p p f f f f f p p p p p p p p p p p f f f f p p p p p p p p p p p p f f p p p p p p p p p p p p p p f p p p p p p p p p p p p p p p f p p p p p p p p p p p p p p p f p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p p",
+        "p f f f f f f f f f f f f f w w p f f f f f f f f f f f f f d w p f f w f f f f f f f f f f f f p f f f f f f f f f w f f f f f p f f f f f w f f f f f f f f f p f f f f f f f f f f f f f w f p p f f f f f f f d d w f f f f p p f f f d w f f d w d f f f f p p f f f d w f f d w d f f f f p p f f w f f f f f f f f w f f p p f f f f d d w f d w f f f f p p f f f w d w w f d w f d w d p p p f f f d w w f f f f w w d p p p f w w f f f f w w f w w d p w w w d d f f f f d d f w w w p w w w f f f f f f f f f w w w",
+        "p f f f f f f f f f f f f f w w p f f f f f f f f f f f f f d w p f f w f f f f f f f f f f f f p f f f f f f f f f w f f f f f p f f f f f w f f f f f f f f f p f f f f f f f f f f f f f w f p p f f f f f f f d d w f f f f p p f f f d w f f d w d f f f f p p f f f d w f f d w d f f f f p p f f w f f f f f f f f w f f p p f f f f d d w f d w f f f f p p f f f w d w w f d w f d w d p p p f f f d w w f f f f w w d p p p f w w f f f f w w f w w d p w w w d d f f f f d d f w w w p w w w f f f f f f f f f w w w",
+        "p f f f f f f f f f f f f f w w p f f f f f f f f f f f f f d w p f f w f f f f f f f f f f f f p f f f f f f f f f w f f f f f p f f f f f w f f f f f f f f f p f f f f f f f f f f f f f w f p p f f f f f f f d d w f f f f p p f f f d w f f d w d f f f f p p f f f d w f f d w d f f f f p p f f w f f f f f f f f w f f p p f f f f d d w f d w f f f f p p f f f w d w w f d w f d w d p p p f f f d w w f f f f w w d p p p f w w f f f f w w f w w d p w w w d d f f f f d d f w w w p w w w f f f f f f f f f w w w",
+        "p f f f f f f f f f f f f f w w p f f f f f f f f f f f f f d w p f f w f f f f f f f f f f f f p f f f f f f f f f w f f f f f p f f f f f w f f f f f f f f f p f f f f f f f f f f f f f w f p p f f f f f f f d d w f f f f p p f f f d w f f d w d f f f f p p f f f d w f f d w d f f f f p p f f w f f f f f f f f w f f p p f f f f d d w f d w f f f f p p f f f w d w w f d w f d w d p p p f f f d w w f f f f w w d p p p f w w f f f f w w f w w d p w w w d d f f f f d d f w w w p w w w f f f f f f f f f w w w",
+        "p f f f f f f f f f f f f f w w p f f f f f f f f f f f f f d w p f f w f f f f f f f f f f f f p f f f f f f f f f w f f f f f p f f f f f w f f f f f f f f f p f f f f f f f f f f f f f w f p p f f f f f f f d d w f f f f p p f f f d w f f d w d f f f f p p f f f d w f f d w d f f f f p p f f w f f f f f f f f w f f p p f f f f d d w f d w f f f f p p f f f w d w w f d w f d w d p p p f f f d w w f f f f w w d p p p f w w f f f f w w f w w d p w w w d d f f f f d d f w w w p w w w f f f f f f f f f w w w",
+        "p f f f f f f f f f f f f f w w p f f f f f f f f f f f f f d w p f f w f f f f f f f f f f f f p f f f f f f f f f w f f f f f p f f f f f w f f f f f f f f f p f f f f f f f f f f f f f w f p p f f f f f f f d d w f f f f p p f f f d w f f d w d f f f f p p f f f d w f f d w d f f f f p p f f w f f f f f f f f w f f p p f f f f d d w f d w f f f f p p f f f w d w w f d w f d w d p p p f f f d w w f f f f w w d p p p f w w f f f f w w f w w d p w w w d d f f f f d d f w w w p w w w f f f f f f f f f w w w",
+        "p f f f f f f f f f f f f f w w p f f f f f f f f f f f f f d w p f f w f f f f f f f f f f f f p f f f f f f f f f w f f f f f p f f f f f w f f f f f f f f f p f f f f f f f f f f f f f w f p p f f f f f f f d d w f f f f p p f f f d w f f d w d f f f f p p f f f d w f f d w d f f f f p p f f w f f f f f f f f w f f p p f f f f d d w f d w f f f f p p f f f w d w w f d w f d w d p p p f f f d w w f f f f w w d p p p f w w f f f f w w f w w d p w w w d d f f f f d d f w w w p w w w f f f f f f f f f w w w",
+        "p f f f f f f f f f f f f f w w p f f f f f f f f f f f f f d w p f f w f f f f f f f f f f f f p f f f f f f f f f w f f f f f p f f f f f w f f f f f f f f f p f f f f f f f f f f f f f w f p p f f f f f f f d d w f f f f p p f f f d w f f d w d f f f f p p f f f d w f f d w d f f f f p p f f w f f f f f f f f w f f p p f f f f d d w f d w f f f f p p f f f w d w w f d w f d w d p p p f f f d w w f f f f w w d p p p f w w f f f f w w f w w d p w w w d d f f f f d d f w w w p w w w f f f f f f f f f w w w",
+        "p f f f f f f f f f f f f f w w p f f f f f f f f f f f f f d w p f f w f f f f f f f f f f f f p f f f f f f f f f w f f f f f p f f f f f w f f f f f f f f f p f f f f f f f f f f f f f w f p p f f f f f f f d d w f f f f p p f f f d w f f d w d f f f f p p f f f d w f f d w d f f f f p p f f w f f f f f f f f w f f p p f f f f d d w f d w f f f f p p f f f w d w w f d w f d w d p p p f f f d w w f f f f w w d p p p f w w f f f f w w f w w d p w w w d d f f f f d d f w w w p w w w f f f f f f f f f w w w",
+        "p f f f f f f f f f f f f f w w p f f f f f f f f f f f f f d w p f f w f f f f f f f f f f f f p f f f f f f f f f w f f f f f p f f f f f w f f f f f f f f f p f f f f f f f f f f f f f w f p p f f f f f f f d d w f f f f p p f f f d w f f d w d f f f f p p f f f d w f f d w d f f f f p p f f w f f f f f f f f w f f p p f f f f d d w f d w f f f f p p f f f w d w w f d w f d w d p p p f f f d w w f f f f w w d p p p f w w f f f f w w f w w d p w w w d d f f f f d d f w w w p w w w f f f f f f f f f w w w",
+    "p p p f f f f f f f f f f f w w p p p f f f f f f f f f f f f f p p p f f f f f f f f f f f f f p p p f f f f f f f f f f f f f p p p p f f f f f f f f f f f f p p p p p f f f f f f f f f f f p p p p p f f f f f f f f f f f p p p p p f f f f f f f f f f f p p p p p f f f f f f f f f f f p p p p p f f f f f f f f f f f p p p p f f f f f f f f f f f f p p p p f f f f f f f f f f f f p p p p f f f f f f f f f f f w p p p p f f f f f f f f f f f w p p p p f f f f f f f f f f f w p p p p f f f f f f f f f f f w",
+    "w w w w w w d w d w d d w w w w f f f f f w w d w d w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w w w w w w w w w w w w f f f f w w w w w w w w w w w w f f f f w w w w w w w w w w w w f f f f w w w w w w w w w w w w t t t t",
+    "w w w w w w d w d w d d w w w w f f f f f w w d w d w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w w w w w w w w w w w w f f f f w w w w w w w w w w w w f f f f w w w w w w w w w w w w f f f f w w w w w w w w w w w w t t t t",
+    "w w w w w w w w w w w w w w f f w w w w f f w w w w w w w w f f w w w w f f w w w w w w w w f f w w w w f f w w w w w w w w t f f f f f f f w w w w w w w w t f f f f f f f w w w w w w w w f w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f w w w w w w w f f f f f f f f f w w w w w w",
+    "w w w w w w f f f f w w w w w w w w w w w w f f f f w w w w w w w w w w w w f f f f f f f f f f w w w w w w f f f f f f f f f f f f f f f f f f f f o f f f f f w f f f f w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w w f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f w f f f f w w w w w w w w f f f w f f f f w w w w w w w w f f f w f f f f w w w w w w w w f f f w f f f f w w w w w w w w f f f w",
+    "w w w w w w w w w w w w w w w w w w w w t d w w w w w w w w w w f f f d d w w f w w w w f w w d f f f w d w d f w w w w f d w d f o f f w d w f f f f o d d w d f f f f w d w f f f f w w f f f f f f f d w w f f w w f f f f f f f f f f f f f f w w f f f f f f f f f f f f f f f f f f f f f f w f f f f o f w f f o f f f f f f f f f f f f f f f f f f f f w w w w f w w w w w w w f w w w w w w w f w w w w w w w f w w w w w w w f w w w w w w w f w w w w w w w f w w w w w w w t w w w w w w w f w w w w w w w f w w w",
+    "w w w w f o f f f f w f f f w w w w w f f f f f f f f f f f w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f o f f f f o f f f f o f f f f o f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f o f f f f o f f f f o f f f f o f f f f f f f f f f f f f f f f w w w f f f f f f f f f f w w w w w w f f f f f f f f f f w w w w w w f f f f f f f f f f w w w w w w f f o f f f f o f f w w w w w w f f f f f f f f f f w w w",
+    "w w w w w d f f f f f f f f f p w w w w w d f f f f f f f f f p f f w d d d f f f f f f f f f p f f d d d w f f f f f f f f f p f f d w w d f f f f f f f f f p f f f f f f f f f f f f f f f p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p w w w w w w f f f f f f f f p p w w w w w w f f f f f f f f f p w w w w w w f f f f f f f f f p w w w w w w f f f f f f f f f p w w w w w w f f f f f f f f f p",
+    "w w w w w d f f f f f f f f f p w w w w w d f f f f f f f f f p f f w d d d f f f f f f f f f p f f d d d w f f f f f f f f f p f f d w w d f f f f f f f f f p f f f f f f f f f f f f f f f p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p w w w w w w f f f f f f f f p p w w w w w w f f f f f f f f f p w w w w w w f f f f f f f f f p w w w w w w f f f f f f f f f p w w w w w w f f f f f f f f f p",
+        "p p p p t t t f f t t t t t t w " +
+        "p o p p d d f v w w f f f f f w " +
+        "p p p p d d f f f f f f f f f f " +
+        "p p p p w w f f f f f f f f f f " +
+        "p p p p w w p p f f f f f d o f " +
+        "p p p p p p p t d f f f f d d f " +
+        "p p p p p p p o w f f f f f f f " +
+        "p p p p p p p p f f f f f f f f " +
+        "p p p p p p f f f f f f f f f f " +
+        "p p p w p p f o f f f f f d o d " +
+        "p p p p f f f f f f f f f d d d " +
+        "p o p p f f f f f f f f f d o d " +
+        "p p p p f f f f f f f f f f f f " +
+        "p p p p f f f f f w f f f w w w " +
+        "p p p p f f f f w w f f f w w w " +
+        "p p p p w w w w w w f f f w w w ",
 
-        "f f f f f f f f f " +
-        "f f f f f f v f f " +
-        "f f f f f f f f f " +
-        "f f f f f f f f f " +
-        "f v f f f f o f f " +
-        "f f f f f f f f f " +
-        "f f f f f f f f f " +
-        "f f f f f f v f f " +
-        "f f f f f f f f f ",
+        "w w w w w w w w w w w w t t t t " +
+        "w w w w w w w w w w w w d d d d " +
+        "f f f f f f f f f f f f f f f f " +
+        "f f f f f f f f f f f f f f f f " +
+        "f f f f f f f f f f d d d d f f " +
+        "f f f f f f f f f f d d d d f f " +
+        "f f f f f f f f f f d d d d f f " +
+        "f f f f f f f f f f d d d d f f " +
+        "f f f f f f f f f f f f f f f f " +
+        "f f w d f f f f f f f f f f f f " +
+        "f f w d f f w d d f f f d d f f " +
+        "f f d d f f d w w f f f w w f f " +
+        "w f d w f f d w w f f f f f f f " +
+        "w f f f f f f f f f f f f f f f " +
+        "w d d d d d w f f d d d d d d w " +
+        "w w w w w w w f f w w w w d d w ",
 
-        "f f f f f f f f f " +
-        "f v f f f f f f f " +
-        "f f f v f f f f f " +
-        "f f f f f f f f f " +
-        "f o f o f f f f f " +
-        "f f f f f f f f f " +
-        "f f f f f f f f f " +
-        "f v f f f f f f f " +
-        "f f f f f f f f f ",
+        "w w w w w f f f f f w w w w w w " +
+        "d d d d d w w v w w f f f f w f " +
+        "d d d d f f f f f f f f f f w f " +
+        "d d d d f f f d d d d d d f v f " +
+        "d d d d f f o d d d d d d f f f " +
+        "f f f f f f f d d d d d d f f f " +
+        "f f f f f f f d d d d d d f f f " +
+        "f f f f f f f d d d d d d f f f " +
+        "f f f o f f o f f f f f f f f f " +
+        "f f f f f f f f f f f f f f f f " +
+        "f f f f f f f f f f f f f f f f " +
+        "f f f f f f f f f f f f f f f f " +
+        "f f f f f f w w w w w w w w t w " +
+        "f f f o f f t t t t t t t t o w " +
+        "w w f f f f w w w w w w w w w w " +
+        "w w f f f t w w w w w w w w w w ",
 
-        "f f f f f f f f f " +
-        "f v f f f f f v f " +
-        "f f f f f f f f f " +
-        "f f f f o f f f f " +
-        "f f f f f f f f f " +
-        "f f f f f f f f f " +
-        "f o f f o f f o f " +
-        "f f f f f f f f f " +
-        "f f f f f f f f f ",
+        "w f f f f f f f w w w w w w w w f f f f f f f f w w w w w w w w w w w w w w f f w w w w w w w w w w w w w w t t w w w w w w w w w w w w w w f f f f f f f f f f w w w w w w f f f f f f f f f f w w w w w w f f f f d d d d f f w w w w w w f f f f d d d d f f w w w w w w f f f f d d d d f f w w w w w w f f f f d d d d f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f f f f f f f f f f f f f f w f f d d w d d d d w d f f f f w f f d w w w d d d d w f f w w",
+        "f f f f w w w w w w w w f f f w f f f f w w w w w w w w f f f f f f f f w w w w w w w w f f f f f f f f w w w w w w w w f f f f f f f f w w w w w w w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w w w w f f d d d d d d f f f f w w w w f f d d d d d d f f f f w w w w f f d d d d d d f f f f w w w w f f d d d d d d f f f f w w w w f f d d d d d d f f f f w w w w f f d d d d d d f f f f f f f f f f f f f f f f f f w w w w w w w w w w w w w w w t",
+        "w w w w w v w w w w w w f w w w f f f f f f f f f f f f t w w w f f f f f f f f f f t f f w w w f w d f f f f f f f f f f w w w f w d f f f f f f f f f f w w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w w w f w w w t t w w w w w f f w w w f w f f f f f f f f w f f w w w f w f f f f f f o f w f f w w w f w f f f o f f f f w f f w w w f w f f f f f f f f w f f w w w f w f w f f f f f f w f f w w w f w w f f w w w w w w f f w w w f f f f f f f f f f f f f f f f w w w w w w w w w w w w w t t t",
+        "w w w f f f f f f f f f w w w w w w w f f f f f f f f f f f f f w w w f f f f f f f f f f f f f w w w f f o f f f f o f w w w w w w w f f f f f f f f f w w w w f f f f f f f f f f f f w w w w w w w f f f f f f f f f w w w w w w w f f f f f f f f f w w w w w w w f f o f f f f o f w w w w w w w f f f f f f f f f w w w w w w w f f f f f f f f f w w w w w w w f f f f f f f f f w w w w w w w f f f f f f f f f w w w w w w w f f o f f f f o f w w w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w",
+        "w w w w w w f f f f f f f f f p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p w w w w f f f f f f f f f f p p w w w w f f f f f f f f f p p p w w w w f f f f f f p p p p p p w w w w f f f f f f f f f p p p w w w w f f f f f f p p p p p p w w w w f f f f f f f f f p p p w w w w f f f f f f f p p f p p w w w w f f f f f f f f f f p p w w w w f f f f f f f f f p f p w w w w f f f f f f f f p f f p w w w w f f f f f f f f f f f p f f f f f f f f f f f f f f f t w w w w w w w w w w w w w w t t",
+        "p p p p w w w w w w w w v w w w p p p p w w w w w w f f f f f f p p p f w w o t t t f f o t o w p p p f w w t w w w f f w w d d p f f f f f f f f f f f d d d d p f f f f f f f f f f f d d d d p f f f f f f f f f f f d d d d p f f f f f f f f f f f d d d d p w w w f f o f f f f f f f f f p f f f f f f f f f f f f f f w p f f f f f f f f f f f f f f w p f f f w f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f f f f f f f p p f f f f f f f f d d d d f f p p f f f f f f f f d d d d f f",
+        "w w w w w w w f f w w w w w v w f f f f f f f w w f f f f d d d o d d f f f f f f f f f f t o w d w o f f f f f o w w f f w t w d w d f f f f w d d d f f f f t d d d f f f f w d d w f f f f w d d d f f f f d d d d f f w f w d d d f f f f f f f f f f f f w f f f f f f f f w w w w w w w w o f o f f f f f f f f f f f f f w f w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f d d d d d d d d f f f f f f f f d d d d d d d d",
+        "w w f f f t w w w w w w w w w w f f v w w f f f f f f f f f f f w f f f f f f f d d d d f f f f w f f f f f f f d d d d f f f f t f f f f f f f d d d d f f f f w w f f f f f f d d d d f f f f w w o f o f f f f f f f o f f f w w f f t f f f f f f f f f f f w w w w f w w w w w w w v w w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f w d f f f f f o f f f f f o f f d w f f f f f f f f f f f f f f f f f",
+        "w f f d w w w w w w d w f f w d f f f d d w w w w w d w f f d w f f f w w d d w w d d d f f d w f f f d d f d w d d d d f f d w f f f f f f f f f w f d w f w d f f f f f w d d f f f d d f w d d d w f f d d d f f f d w d d w d d w f f d d d f f f d w d d w w w f f f f f f f f f f d w w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f d d f f f f f w f f f f f f f f w w f f f f f f f f f f o f f f f f f f f f f f f f f f f f f",
+        "d d d w w w w w w w w w w w w f d d d w w w w w w w w w w w w w d d d d d d d d d w w w w w d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d d w d d d d w d d d d w d d d d d d d d d d d d d d d d d d f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f o d d d d o d d d d o f f f f f d d d d d d d d d d d f f f",
+        "w w w w w w w w w w w w w d d d w w w w w w w w w w w d d d d d w w w w w d d w d d d d d w w w w w w d d d w w d d d d d w w w d d d d d d w d d d w w d d d d d d d d w d d d w w d d d d d d d d d d d d w d d d d d d d d d d d w d d w w w d w d d w d d d w w w w w f f f w w w w w w w w f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f o d d d d o d d d d o d d d d f d d d d d d d d d d d d d d d",
+        "t f f f f f f f f f f f f f f w w f f f f f f f f f f f f f f w t f f f f o f f f f o f f f f w w f f f f f f f f f f f f f f t w f f f f f f f f f f f f f f t w f f f f f f f f f f f f f f t w f f f f f f f f f f f f f f t w w f f f o f v w w o f f f w t w w w w w t f w f f w w w w w w f f f f f o w f f f o f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f f o f f f f o f f f f o f f f f w d f f f f f f f f f f f f f f f",
+        "w w w w w w w w w w w w w w f f w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w w t t t t w w w w w w w w w d d d t t t t d d d d d d d d d d d d t t d d d d d d d d d d d d d d t t d d d d d d d d d d d d d t t t d w d d d d w d d d d w d t w w w w w w w w w w w w w w w t f f f f f f f f f f f f f f f t f f f f f f f f f f f f f f t t f f f f f f f f f f f f f f t t f f f f f f f f f f f f f f t t f f f f f f f f f f f f f f t t f f f f f f f f f f f f f f f t f f f f f f f f f f f f f f f t"
+    ];
 
-        "f f f f f f f f f f f f f f " +
-        "f f o f f f f f f f f f o f " +
-        "f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f " +
-        "f f f w o f f f f f f f o f " +
-        "f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f w f " +
-        "f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f " +
-        "f f v f f w f o f f f f v f " +
-        "f f f f f f f f f f f f f f " +
-        "f f f f o f f o f f f f f f " +
-        "f f f f f f f f f f f f f f ",
+	//var mapSizeArray = [[9, 9], [9, 9], [9, 9], [9, 9], [14, 14], [14, 14], [16, 16], [16, 16], [16, 16], [16, 16]];
 
-        "f f f f f f f f f f f f f f " +
-        "f f f f f o f f f f f v f f " +
-        "f f f f f f f f f f f f f f " +
-        "f f f f f f f o f f f o f f " +
-        "f f f f f f f f f f f f f f " +
-        "f f w f f f f f f f f f f f " +
-        "f w o f f f f f f o f f f f " +
-        "f f f f f f v f f f f o w f " +
-        "f f f f f f f f f f f w f f " +
-        "f f f f f f f f f f f f f f " +
-        "f f o f f f o f f f f f o f " +
-        "f f f f f f f f f f f f f f " +
-        "f f f f f o f o f f f f o f " +
-        "f f f f f f f f f f f f f f ",
+	var mapWhereToArray = [[0, "N", 1, 9, "W"], [1, "N", "E", "S", 0], [2, "N", 3, 11, "W"], [3, "N", 4, "S", 2], [4, "N", 5, 13, 3],
+    [5, "N", 6, "S", 4], [6, "N", 7, "S", 5], [7, "N", "E", 16, 6], [8, "N", "E", "S", "W"], [9, 0, 10, 18, "W"], [10, "N", 11, "S", 9],
+    [11, 2, 12, 20, 10], [12, "N", 13, "S", 11], [13, 4, "E", "S", 12], [14, "N", 15, 23, "W"], [15, "N", 16, "S", 14], [16, 7, 17, "S", 15],
+    [17, "N", "E", 26, 16], [18, 9, 19, 27, "W"], [19, "N", 20, "S", 18], [20, 11, 21, 29, 19], [21, "N", 22, "S", 20], [22, "N", "E", 31, 21],
+    [23, 14, 24, "S", "W"], [24, "N", 25, 33, 23], [25, "N", "E", 34, 24], [26, 17, "E", 35, "W"], [27, 18, 28, 46, "W"], [28, "N", 29, "S", 27],
+    [29, 20, "E", 48, 28], [30, 22, "E", 50, "W"], [31, 22, "E", 50, "W"], [32, 22, "E", 50, "W"], [33, 24, "E", 52, "W"], [34, 25, 35, 53, "W"],
+    [35, 26, "E", "S", 34], [36, 26, "E", "S", 34], [37, 26, "E", "S", 34], [38, 26, "E", "S", 34], [39, 26, "E", "S", 34], [40, 26, "E", "S", 34],
+        [41, 26, "E", "S", 34], [42, 26, "E", "S", 34], [43, 26, "E", "S", 34], [44, 26, "E", "S", 34], [45, 26, "E", "S", 34],
+        [46, 27, 47, 55, "W"], [47, "N", 48, "S", 46], [48, 29, 49, 57, 47], [49, "N", 50, 58, 48], [50, 31, 51, 59, 49],
+    [51, "N", 52, 60, 50], [52, 33, 53, 61, 51], [53, 34, "E", 62, 52], [54, 34, "E", 62, 52], [55, 47, 56, 63, 55], [56, 56, 57, 64, 55],
+        [57, 49, 58, 65, 56], [58, 50, 59, 66, 57], [59, 51, 60, 67, 58], [60, 52, 61, 68, 59], [61, 53, 62, 69, 60], [62, 54, 63, 70, 61],
+        [63, 55, 64, 70, 62], [64, 56, 65, 70, 63], [65, 57, 66, 73, 64], [66, 58, 67, 74, 65], [67, 59, 68, 70, 66], [68, 60, 69, 70, 67],
+        [69, 61, 70, 70, 68], [70, 62, 70, 70, 69]];
 
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f o f f o f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f o f f f o f f f f o f f f o f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f v f f o f f f f f " +
-        "f o f f w f f f f f f f f f f f " +
-        "f f f f f f f w f f f o f f o f " +
-        "f o f f f o f f v f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f w f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f o f f o f f w f f f f f f o f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f ",
-
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f v f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f o f f f o f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f v f f f o f f " +
-        "f f o f f o f f f f f f f o f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f o f f o f f f o f f f f f f " +
-        "f f o f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f ",
-
-        "f f f f f f f f f f f f f f f f " +
-        "f f o f f f f o f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f o f f f o f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f o f f f f f v f f f o f o f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f o f f f f f o f f o f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f o f f f f f f v f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f o f f f o f f f f " +
-        "f f f f f f f f o f f f f f f f ",
-
-        "f f f f f f f f f f f f f f f f " +
-        "f f o f o f o o f f v f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f o o f f f f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f o f f o f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f o f f f o f f f o f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f o f f f f f f f f " +
-        "f f f f f f f f f f f f f f f f " +
-        "f f v f o f f f f f f f f f o f " +
-        "f f f o f f f f f f o f f f f f " +
-        "f f f f f f f f f f f f f f f f "];
-	var mapSizeArray = [[9, 9], [9, 9], [9, 9], [9, 9], [14, 14], [14, 14], [16, 16], [16, 16], [16, 16], [16, 16]];
-
-	var mapWhereToArray = [[0, 1, 2, 3, 4], [1, 5, 2, 0, 4], [2, 1, 2, 3, 4], [3, 1, 2, 3, 4], [4, 1, 2, 3, 4], [5, 1, 2, 3, 4],
-        [6, 1, 2, 3, 4], [7, 1, 2, 3, 4], [8, 1, 2, 3, 4], [9, 1, 2, 3, 4]];
-
-	var playerSpawnArray = [[[5, 5], [5, 6], [5, 7], [6, 5]],
-        [[5, 5], [5, 6], [5, 7], [6, 5]],
-        [[5, 5], [5, 6], [5, 7], [6, 5]],
-        [[5, 5], [5, 6], [5, 7], [6, 5]],
-        [[5, 5], [5, 6], [5, 7], [6, 5]],
-        [[5, 5], [5, 6], [5, 7], [6, 5]],
-        [[5, 5], [5, 6], [5, 7], [6, 5]],
-        [[5, 5], [5, 6], [5, 7], [6, 5]],
-        [[5, 5], [5, 6], [5, 7], [6, 5]],
-        [[5, 5], [5, 6], [5, 7], [6, 5]]];
+	var playerSpawnArray = [[[8, 8], [15, 8], [8, 15], [8, 8]], [[8, 8], [15, 8], [8, 15], [0, 8]], [[8, 8], [15, 6], [10, 15], [0, 8]], [[8, 8], [15, 8], [8, 15], [0, 6]],
+        [[8, 8], [15, 8], [8, 15], [0, 8]], [[8, 8], [15, 8], [8, 15], [0, 8]], [[8, 8], [15, 8], [8, 15], [0, 8]], [[8, 8], [15, 8], [9, 15], [0, 8]],
+        [[8, 8], [15, 8], [8, 15], [0, 8]], [[8, 0], [15, 8], [8, 15], [0, 8]], [[8, 8], [15, 8], [8, 15], [0, 8]], [[10, 0], [15, 6], [8, 15], [0, 8]],
+        [[8, 8], [15, 8], [8, 15], [0, 6]], [[8, 0], [15, 8], [8, 15], [0, 8]], [[8, 0], [15, 7], [11, 15], [0, 8]], [[8, 0], [15, 8], [8, 15], [0, 8]],
+        [[10, 0], [15, 8], [8, 15], [0, 8]], [[8, 0], [15, 8], [8, 15], [0, 8]], [[8, 0], [15, 8], [8, 15], [0, 8]], [[8, 0], [15, 8], [8, 15], [0, 8]],
+        [[8, 0], [15, 8], [12, 15], [0, 8]], [[8, 0], [15, 8], [8, 15], [0, 8]], [[8, 0], [15, 8], [10, 15], [0, 7]], [[11, 0], [15, 8], [8, 15], [0, 8]],
+        [[8, 0], [15, 9], [8, 15], [0, 9]], [[8, 0], [15, 8], [8, 15], [0, 8]], [[8, 0], [15, 8], [8, 15], [0, 8]], [[8, 0], [15, 8], [8, 15], [0, 8]],
+        [[8, 0], [15, 8], [8, 15], [0, 8]], [[12, 0], [15, 8], [12, 15], [0, 8]], [[8, 0], [15, 8], [8, 15], [0, 8]], [[10, 0], [15, 8], [8, 15], [0, 8]],
+        [[8, 0], [15, 8], [8, 15], [0, 8]], [[8, 0], [15, 8], [8, 15], [0, 8]], [[8, 0], [15, 8], [8, 15], [0, 8]], [[8, 0], [15, 8], [8, 15], [0, 8]],
+        [[8, 0], [15, 0], [8, 15], [0, 8]], [[8, 0], [15, 0], [8, 15], [0, 8]], [[8, 0], [15, 0], [8, 15], [0, 8]], [[8, 0], [15, 0], [8, 15], [0, 8]],
+        [[8, 0], [15, 0], [8, 15], [0, 8]], [[8, 0], [15, 0], [8, 15], [0, 8]], [[8, 0], [15, 0], [8, 15], [0, 8]], [[8, 0], [15, 0], [8, 15], [0, 8]],
+        [[8, 0], [15, 0], [8, 15], [0, 8]], [[8, 0], [15, 0], [8, 15], [0, 8]],
+        [[8, 0], [15, 0], [8, 15], [0, 8]], [[8, 0], [15, 0], [8, 15], [0, 8]], [[12, 0], [15, 0], [8, 15], [0, 8]], [[8, 0], [15, 0], [7, 15], [0, 8]],
+        [[8, 0], [15, 0], [4, 15], [0, 8]], [[8, 0], [15, 0], [5, 15], [0, 8]], [[8, 0], [15, 0], [8, 15], [0, 8]], [[8, 0], [15, 0], [8, 15], [0, 8]], [[8, 0], [15, 0], [8, 15], [0, 8]],
+        [[9, 5], [9, 15], [11, 15], [9, 5]], [[9, 5], [15, 8], [7, 15], [0, 8]], [[7, 0], [15, 1], [3, 15], [0, 8]], [[7, 0], [15, 7], [2, 15], [0, 11]],
+        [[3, 0], [15, 7], [2, 15], [0, 11]], [[4, 0], [15, 5], [2, 15], [0, 11]], [[4, 1], [15, 2], [2, 15], [0, 5]], [[7, 0], [15, 2], [2, 15], [0, 2]],
+        [[12, 1], [15, 1], [5, 15], [0, 2]], [[14, 1], [15, 1], [5, 15], [0, 5]], [[3, 0], [15, 1], [5, 15], [0, 1]], [[2, 0], [15, 12], [5, 15], [0, 1]],
+        [[2, 0], [15, 5], [5, 15], [0, 12]], [[2, 0], [15, 12], [5, 15], [0, 6]], [[5, 0], [15, 12], [5, 15], [0, 12]], [[5, 12], [5, 12], [5, 12], [5, 12]]];
 
 	const G_COLOR_BLACK = [0, 0, 0];
 	const G_COLOR_WHITE = [220, 220, 220];
@@ -400,9 +402,6 @@ var G = (function(){
 		reqVic = 0;
 
 		var count = 0;
-
-		gridSizeX = mapSizeArray[currentMap][0];
-		gridSizeY = mapSizeArray[currentMap][1];
 
 		PS.gridSize(gridSizeX, gridSizeY);
 		PS.gridColor(G_COLOR_BG);
@@ -723,17 +722,17 @@ var G = (function(){
 	function drawBead(x, y){
 		switch(PS.data(x, y)[0]){
 			case "f":
-				PS.color(x, y, G_COLOR_WHITE);
+				PS.color(x, y, [220, 220, 220]);
 				PS.border(x, y, 0);
                 PS.radius(x, y, 0);
 				break;
             case "b":
-                PS.color(x, y, G_COLOR_WHITE);
+                PS.color(x, y, [240, 240, 240]);
                 PS.border(x, y, 0);
                 PS.radius(x, y, 0);
                 break;
             case "d":
-                PS.color(x, y, G_COLOR_WHITE);
+                PS.color(x, y, [200, 200, 200]);
                 PS.border(x, y, 0);
                 PS.radius(x, y, 0);
                 break;
@@ -754,16 +753,16 @@ var G = (function(){
                 PS.radius(x, y, 0);
 				break;
             case "w":
-                PS.color(x, y, G_COLOR_RED);
+                PS.color(x, y, [125, 125, 125]);
                 PS.border(x, y, 0);
                 PS.radius(x, y, 0);
             case "t":
-                PS.color(x, y, G_COLOR_RED);
+                PS.color(x, y, [160, 160, 160]);
                 PS.border(x, y, 0);
                 PS.radius(x, y, 0);
                 break;
             case "p":
-                PS.color(x, y, G_COLOR_BLACK);
+                PS.color(x, y, [20, 20, 20]);
                 PS.border(x, y, 0);
                 PS.radius(x, y, 0);
                 break;
@@ -822,6 +821,8 @@ var G = (function(){
 		var xIt;
 		var yIt;
 
+		PS.audioPlay("fx_click");
+
         for(yIt = 0; yIt < gridSizeY; yIt++){
             for(xIt = 0; xIt < gridSizeX; xIt++){
                 if(PS.data(xIt, yIt)[0] === "s"){
@@ -851,6 +852,7 @@ var G = (function(){
                                         PS.data(xIt, yIt - 1, ["s", false, true]);
                                         PS.data(xIt, yIt, ["b", false, false]);
                                         relicFlag = true;
+                                        PS.audioPlay("fx_ding");
                                         pickupCounter++;
                                         darkenScreen();
                                     }
@@ -877,6 +879,7 @@ var G = (function(){
                                         PS.data(xIt, yIt - 1, ["s", false, true]);
                                         PS.data(xIt, yIt, ["d", false, false]);
                                         relicFlag = true;
+                                        PS.audioPlay("fx_ding");
                                         pickupCounter++;
                                         darkenScreen();
                                     }
@@ -903,6 +906,7 @@ var G = (function(){
                                         PS.data(xIt, yIt - 1, ["s", false, true]);
                                         PS.data(xIt, yIt, ["x", false, false]);
                                         relicFlag = true;
+                                        PS.audioPlay("fx_ding");
                                         pickupCounter++;
                                         darkenScreen();
                                     }
@@ -928,6 +932,7 @@ var G = (function(){
                                         PS.data(xIt, yIt - 1, ["s", false, true]);
                                         PS.data(xIt, yIt, ["f", false, false]);
                                         relicFlag = true;
+                                        PS.audioPlay("fx_ding");
                                         pickupCounter++;
                                         darkenScreen();
                                     }
@@ -948,7 +953,7 @@ var G = (function(){
                                 serializeCurrentMap();
                                 currentMap = mapWhereToArray[currentMap][1];
 
-                                setupMap("N");
+                                setupMap("S");
                                 darkenScreen();
                             }
 							break;
@@ -977,6 +982,7 @@ var G = (function(){
                                         PS.data(xIt + 1, yIt, ["s", false, true]);
                                         PS.data(xIt, yIt, ["b", false, false]);
                                         relicFlag = true;
+                                        PS.audioPlay("fx_ding");
                                         pickupCounter++;
                                         darkenScreen();
                                     }
@@ -1003,6 +1009,7 @@ var G = (function(){
                                         PS.data(xIt + 1, yIt, ["s", false, true]);
                                         PS.data(xIt, yIt, ["d", false, false]);
                                         relicFlag = true;
+                                        PS.audioPlay("fx_ding");
                                         pickupCounter++;
                                         darkenScreen();
                                     }
@@ -1029,6 +1036,7 @@ var G = (function(){
                                         PS.data(xIt + 1, yIt, ["s", false, true]);
                                         PS.data(xIt, yIt, ["x", false, false]);
                                         relicFlag = true;
+                                        PS.audioPlay("fx_ding");
                                         pickupCounter++;
                                         darkenScreen();
                                     }
@@ -1054,6 +1062,7 @@ var G = (function(){
                                         PS.data(xIt + 1, yIt, ["s", false, true]);
                                         PS.data(xIt, yIt, ["f", false, false]);
                                         relicFlag = true;
+                                        PS.audioPlay("fx_ding");
                                         pickupCounter++;
                                         darkenScreen();
                                     }
@@ -1200,7 +1209,7 @@ var G = (function(){
                                 serializeCurrentMap();
                                 currentMap = mapWhereToArray[currentMap][3];
 
-                                setupMap("S");
+                                setupMap("N");
                                 darkenScreen();
                             }
 							break;
@@ -1337,6 +1346,7 @@ var G = (function(){
 					}
                     if(deathCounter <= 0){
                         if(!declareVictory()) {
+                            PS.audioPlay("fx_pop");
                             serializeCurrentMap();
                             relicFlag = false;
                             bFlag = false;
@@ -1381,7 +1391,7 @@ var G = (function(){
         if (!isWinning) {
             isWinning = true;
 
-            PS.statusText("VICTORY");
+            PS.audioPlay("fx_tada");
 
             /*var gridSizeX = 16;
             var gridSizeY = 16;
@@ -1423,6 +1433,9 @@ var G = (function(){
 			PS.gridSize(gridSizeX, gridSizeY);
 			PS.statusText("");
 			setupMap("N");
+
+			var audioObject = { autoplay: true, loop: true, lock: true, }
+
 		},
 
 		keyDown: function(key, shift, ctrl, options){
