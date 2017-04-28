@@ -218,6 +218,11 @@ var G = (function(){
 
     var trailArray = [];
 
+    const maxDeathCounter = 10;
+
+    var deathCounter = 10;
+    var pickupCounter = 0;
+
 	var reqVic = 0;
 	var curVic = 0;
 
@@ -226,21 +231,21 @@ var G = (function(){
 	var mapNumber = 10;
 	var currentMap = 0;
 	var mapArray = [
+        "f f f w w v f w f " +
+        "f w f f f f f f f " +
+        "v o f f f o f f f " +
         "f f f f f f f f f " +
-        "f f f f f f f f f " +
-        "f f f f f f f f f " +
-        "f f f f s f f f f " +
         "f f f f f f f f f " +
         "f v f f o f f v f " +
         "f f f f f f f f f " +
         "f f f f f f f f f " +
-        "f f f f f f f f f ",
+        "f f f f f f z z z ",
 
         "f f f f f f f f f " +
         "f f f f f f v f f " +
         "f f f f f f f f f " +
         "f f f f f f f f f " +
-        "f v f s f f o f f " +
+        "f v f f f f o f f " +
         "f f f f f f f f f " +
         "f f f f f f f f f " +
         "f f f f f f v f f " +
@@ -250,13 +255,13 @@ var G = (function(){
         "f v f f f f f f f " +
         "f f f v f f f f f " +
         "f f f f f f f f f " +
-        "f o f o f f f s f " +
+        "f o f o f f f f f " +
         "f f f f f f f f f " +
         "f f f f f f f f f " +
         "f v f f f f f f f " +
         "f f f f f f f f f ",
 
-        "f f f f s f f f f " +
+        "f f f f f f f f f " +
         "f v f f f f f v f " +
         "f f f f f f f f f " +
         "f f f f o f f f f " +
@@ -273,7 +278,7 @@ var G = (function(){
         "f f f w o f f f f f f f o f " +
         "f f f f f f f f f f f f f f " +
         "f f f f f f f f f f f f f f " +
-        "f f f f f f f s f f f f w f " +
+        "f f f f f f f f f f f f w f " +
         "f f f f f f f f f f f f f f " +
         "f f f f f f f f f f f f f f " +
         "f f v f f w f o f f f f v f " +
@@ -286,7 +291,7 @@ var G = (function(){
         "f f f f f f f f f f f f f f " +
         "f f f f f f f o f f f o f f " +
         "f f f f f f f f f f f f f f " +
-        "f f w f f s f f f f f f f f " +
+        "f f w f f f f f f f f f f f " +
         "f w o f f f f f f o f f f f " +
         "f f f f f f v f f f f o w f " +
         "f f f f f f f f f f f w f f " +
@@ -302,7 +307,7 @@ var G = (function(){
         "f o f f f o f f f f o f f f o f " +
         "f f f f f f f f f f f f f f f f " +
         "f f f f f f f v f f o f f f f f " +
-        "f o f f w f f f f s f f f f f f " +
+        "f o f f w f f f f f f f f f f f " +
         "f f f f f f f w f f f o f f o f " +
         "f o f f f o f f v f f f f f f f " +
         "f f f f f f f f f f f f f f f f " +
@@ -316,7 +321,7 @@ var G = (function(){
         "f f f f f f f f f f f f f f f f " +
         "f f f f f f f f f f f f f f f f " +
         "f f v f f f f f f f f f f f f f " +
-        "f f f f f f f s f f f f f f f f " +
+        "f f f f f f f f f f f f f f f f " +
         "f f f f f f f f f f f f f f f f " +
         "f f f f f o f f f o f f f f f f " +
         "f f f f f f f f f f f f f f f f " +
@@ -336,7 +341,7 @@ var G = (function(){
         "f f f f f f f f f f f f f f f f " +
         "f f f f f o f f f o f f f f f f " +
         "f f f f f f f f f f f f f f f f " +
-        "f f f f f s f f f f f f f f f f " +
+        "f f f f f f f f f f f f f f f f " +
         "f f o f f f f f v f f f o f o f " +
         "f f f f f f f f f f f f f f f f " +
         "f f f f f o f f f f f o f f o f " +
@@ -351,7 +356,7 @@ var G = (function(){
         "f f o f o f o o f f v f f f f f " +
         "f f f f f f f f f f f f f f f f " +
         "f f f f f f f f f f f f f f f f " +
-        "f f f f f f f f f f s f f f f f " +
+        "f f f f f f f f f f f f f f f f " +
         "f f f o o f f f f f f f f f f f " +
         "f f f f f f f f f f f f f f f f " +
         "f f f f f f f o f f o f f f f f " +
@@ -368,6 +373,17 @@ var G = (function(){
 	var mapWhereToArray = [[0, 1, 2, 3, 4], [1, 5, 2, 0, 4], [2, 1, 2, 3, 4], [3, 1, 2, 3, 4], [4, 1, 2, 3, 4], [5, 1, 2, 3, 4],
         [6, 1, 2, 3, 4], [7, 1, 2, 3, 4], [8, 1, 2, 3, 4], [9, 1, 2, 3, 4]];
 
+	var playerSpawnArray = [[[5, 5], [5, 6], [5, 7], [6, 5]],
+        [[5, 5], [5, 6], [5, 7], [6, 5]],
+        [[5, 5], [5, 6], [5, 7], [6, 5]],
+        [[5, 5], [5, 6], [5, 7], [6, 5]],
+        [[5, 5], [5, 6], [5, 7], [6, 5]],
+        [[5, 5], [5, 6], [5, 7], [6, 5]],
+        [[5, 5], [5, 6], [5, 7], [6, 5]],
+        [[5, 5], [5, 6], [5, 7], [6, 5]],
+        [[5, 5], [5, 6], [5, 7], [6, 5]],
+        [[5, 5], [5, 6], [5, 7], [6, 5]]];
+
 	const G_COLOR_BLACK = [0, 0, 0];
 	const G_COLOR_WHITE = [220, 220, 220];
 	const G_COLOR_BG = [220, 220, 220];
@@ -377,7 +393,7 @@ var G = (function(){
 	const G_COLOR_OBELISK = [39, 39, 39];
 	const G_COLOR_OBTRAIL = [90, 90, 90];
 
-	function setupMap(){
+	function setupMap(direction){
 		var xIt;
 		var yIt;
 
@@ -401,12 +417,24 @@ var G = (function(){
 					PS.data(xIt, yIt, ["v", true, false]);
 					reqVic++;
 				}
-				if(tempMap[count] === "s"){
-					PS.data(xIt, yIt, ["s", false, true]);
-				}
 				count++;
 			}
 		}
+
+		switch(direction){
+            case "N":
+                PS.data(playerSpawnArray[currentMap][0][0], playerSpawnArray[currentMap][0][1], ["s", false, true]);
+                break;
+            case "S":
+                PS.data(playerSpawnArray[currentMap][2][0], playerSpawnArray[currentMap][2][1], ["s", false, true]);
+                break;
+            case "W":
+                PS.data(playerSpawnArray[currentMap][3][0], playerSpawnArray[currentMap][3][1], ["s", false, true]);
+                break;
+            case "E":
+                PS.data(playerSpawnArray[currentMap][1][0], playerSpawnArray[currentMap][1][1], ["s", false, true]);
+                break;
+        }
 
 		redrawMap();
 	}
@@ -509,6 +537,57 @@ var G = (function(){
         }
 	}
 
+	function destroyWalls(x, y){
+        if(x - 1 >= 0){
+            if(PS.data(x - 1, y)[0] === "w") {
+                PS.data(x - 1, y, ["f", false, false]);
+                redrawMap();
+            }
+        }
+        if(x - 2 >= 0){
+            if(PS.data(x - 2, y)[0] === "w") {
+                PS.data(x - 2, y, ["f", false, false]);
+                redrawMap();
+            }
+        }
+        if(x + 1 < gridSizeX){
+            if(PS.data(x + 1, y)[0] === "w") {
+                PS.data(x + 1, y, ["f", false, false]);
+                redrawMap();
+            }
+        }
+        if(x + 2 < gridSizeX){
+            if(PS.data(x + 2, y)[0] === "w") {
+                PS.data(x + 2, y, ["f", false, false]);
+                redrawMap();
+            }
+        }
+        if(y - 1 >= 0){
+            if(PS.data(x, y - 1)[0] === "w") {
+                PS.data(x, y - 1, ["f", false, false]);
+                redrawMap();
+            }
+        }
+        if(y - 2 >= 0){
+            if(PS.data(x, y - 2)[0] === "w") {
+                PS.data(x, y - 2, ["f", false, false]);
+                redrawMap();
+            }
+        }
+        if(y + 1 < gridSizeY){
+            if(PS.data(x, y + 1)[0] === "w") {
+                PS.data(x, y + 1, ["f", false, false]);
+                redrawMap();
+            }
+        }
+        if(y + 2 < gridSizeY){
+            if(PS.data(x, y + 2)[0] === "w") {
+                PS.data(x, y + 2, ["f", false, false]);
+                redrawMap();
+            }
+        }
+    }
+
 	function finishDrawing(x, y, direction){
 	    if(trailArray.indexOf(x + (100 * y)) >= 0){
 	        return;
@@ -532,6 +611,7 @@ var G = (function(){
                     if (PS.data(x, y - 1)[0] === "v") {
                         curVic++;
                         finishDrawing(x, y - 1, 0);
+                        destroyWalls(x, y - 1);
                     }
                     if (PS.data(x, y - 1)[0] === "o") {
 						finishDrawing(x + 1, y - 1, 1);
@@ -561,6 +641,7 @@ var G = (function(){
                     if (PS.data(x + 1, y)[0] === "v") {
                         curVic++;
                         finishDrawing(x + 1, y, 1);
+                        destroyWalls(x + 1, y);
                     }
                     if (PS.data(x + 1, y)[0] === "o") {
                         finishDrawing(x + 1, y - 1, 0);
@@ -568,11 +649,11 @@ var G = (function(){
                         drawBead(x + 1, y);
                         PS.radius(x + 1, y, 0);
                     }
-                    if (PS.data(x, y - 1)[0] === "t") {
-                        finishDrawing(x, y - 1, 0);
+                    if (PS.data(x + 1, y)[0] === "t") {
+                        finishDrawing(x + 1, y, 1);
                     }
-                    if (PS.data(x, y - 1)[0] === "p") {
-                        finishDrawing(x, y - 1, 0);
+                    if (PS.data(x + 1, y)[0] === "p") {
+                        finishDrawing(x + 1, y, 1);
                     }
                 }
 				break;
@@ -590,6 +671,7 @@ var G = (function(){
                     if (PS.data(x, y + 1)[0] === "v") {
                         curVic++;
                         finishDrawing(x, y + 1, 2);
+                        destroyWalls(x, y + 1);
                     }
                     if (PS.data(x, y + 1)[0] === "o") {
                         finishDrawing(x + 1, y + 1, 1);
@@ -597,11 +679,11 @@ var G = (function(){
                         drawBead(x, y + 1);
                         PS.radius(x, y + 1, 0);
                     }
-                    if (PS.data(x, y - 1)[0] === "t") {
-                        finishDrawing(x, y - 1, 0);
+                    if (PS.data(x, y + 1)[0] === "t") {
+                        finishDrawing(x, y + 1, 2);
                     }
-                    if (PS.data(x, y - 1)[0] === "p") {
-                        finishDrawing(x, y - 1, 0);
+                    if (PS.data(x, y + 1)[0] === "p") {
+                        finishDrawing(x, y + 1, 2);
                     }
                 }
 				break;
@@ -619,6 +701,7 @@ var G = (function(){
                     if (PS.data(x - 1, y)[0] === "v") {
                         curVic++;
                         finishDrawing(x - 1, y, 3);
+                        destroyWalls(x - 1, y);
                     }
                     if (PS.data(x - 1, y)[0] === "o") {
                         finishDrawing(x - 1, y - 1, 0);
@@ -626,11 +709,11 @@ var G = (function(){
                         drawBead(x - 1, y);
                         PS.radius(x - 1, y, 0);
                     }
-                    if (PS.data(x, y - 1)[0] === "t") {
-                        finishDrawing(x, y - 1, 0);
+                    if (PS.data(x - 1, y)[0] === "t") {
+                        finishDrawing(x - 1, y, 3);
                     }
-                    if (PS.data(x, y - 1)[0] === "p") {
-                        finishDrawing(x, y - 1, 0);
+                    if (PS.data(x - 1, y)[0] === "p") {
+                        finishDrawing(x - 1, y, 3);
                     }
                 }
 				break;
@@ -683,14 +766,57 @@ var G = (function(){
                 PS.color(x, y, G_COLOR_BLACK);
                 PS.border(x, y, 0);
                 PS.radius(x, y, 0);
+                break;
+            case "z":
+                PS.color(x, y, [255, 255, 255]);
+                PS.border(x, y, 2);
+                PS.radius(x, y, 25);
+                break;
+            case "x":
+                PS.color(x, y, G_COLOR_WHITE);
+                PS.border(x, y, 0);
+                PS.radius(x, y, 0);
+                break;
 		}
 	}
 
 	function declareVictory(){
-		if(curVic === reqVic){
+		if(pickupCounter === 3){
 			return true;
 		}
 	}
+
+	function darkenScreen(){
+	    if(deathCounter > 0) {
+            deathCounter--;
+        }
+
+        var colorVar = 255 * (deathCounter/maxDeathCounter);
+
+        PS.gridColor([colorVar, colorVar, colorVar]);
+    }
+
+	function serializeCurrentMap(){
+	    var tempString = "";
+
+	    var xIt;
+	    var yIt;
+
+	    for(yIt = 0; yIt < gridSizeY; yIt++){
+	        for(xIt = 0; xIt < gridSizeX; xIt++){
+	            if(PS.data(xIt, yIt)[0] !== "s") {
+                    tempString = tempString + PS.data(xIt, yIt)[0] + " ";
+                } else{
+                    tempString = tempString + "f" + " ";
+                }
+            }
+        }
+        mapArray[currentMap] = tempString;
+    }
+
+    var relicFlag = false;
+	var bFlag = false;
+	var dFlag = false;
 
 	function movePlayer(direction){
 		var xIt;
@@ -702,82 +828,506 @@ var G = (function(){
                     switch(direction){
 						case 0:
                             if(yIt - 1 >= 0) {
-                                if (PS.data(xIt, yIt - 1)[0] === "f") {
-                                	PS.data(xIt, yIt - 1, ["s", false, true]);
-                                	PS.data(xIt, yIt, ["f", false, false]);
-                                }
-                                if (PS.data(xIt, yIt - 1)[0] === "b") {
-                                    PS.data(xIt, yIt - 1, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["b", false, false]);
-                                }
-                                if (PS.data(xIt, yIt - 1)[0] === "d") {
-                                    PS.data(xIt, yIt - 1, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["d", false, false]);
+                                if(bFlag){
+                                    bFlag = false;
+                                    if (PS.data(xIt, yIt - 1)[0] === "f") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt - 1)[0] === "b") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt - 1)[0] === "d") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt - 1)[0] === "z") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
+                                } else if(dFlag){
+                                    dFlag = false;
+                                    if (PS.data(xIt, yIt - 1)[0] === "f") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt - 1)[0] === "b") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt - 1)[0] === "d") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt - 1)[0] === "z") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
+                                } else if(relicFlag){
+                                    relicFlag = false;
+                                    if (PS.data(xIt, yIt - 1)[0] === "f") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt - 1)[0] === "b") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt - 1)[0] === "d") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt - 1)[0] === "z") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
+                                } else {
+                                    if (PS.data(xIt, yIt - 1)[0] === "f") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt - 1)[0] === "b") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt - 1)[0] === "d") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt - 1)[0] === "z") {
+                                        PS.data(xIt, yIt - 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
                                 }
                             } else{
+                                if(relicFlag){
+                                    relicFlag = false;
+                                    PS.data(xIt, yIt, ["x", false, false]);
+                                }
+                                if(bFlag){
+                                    bFlag = false;
+                                    PS.data(xIt, yIt, ["b", false, false]);
+                                }
+                                if(dFlag){
+                                    dFlag = false;
+                                    PS.data(xIt, yIt, ["d", false, false]);
+                                }
+                                serializeCurrentMap();
                                 currentMap = mapWhereToArray[currentMap][1];
 
-                                setupMap();
+                                setupMap("N");
+                                darkenScreen();
                             }
 							break;
 						case 1:
                             if(xIt + 1 < gridSizeX) {
-                                if (PS.data(xIt + 1, yIt)[0] === "f") {
-                                    PS.data(xIt + 1, yIt, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["f", false, false]);
-                                }
-                                if (PS.data(xIt + 1, yIt)[0] === "b") {
-                                    PS.data(xIt + 1, yIt, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["b", false, false]);
-                                }
-                                if (PS.data(xIt + 1, yIt)[0] === "d") {
-                                    PS.data(xIt + 1, yIt, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["d", false, false]);
+                                if(bFlag){
+                                    bFlag = false;
+                                    if (PS.data(xIt + 1, yIt)[0] === "f") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt + 1, yIt)[0] === "b") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt + 1, yIt)[0] === "d") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt + 1, yIt)[0] === "z") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
+                                } else if(dFlag){
+                                    dFlag = false;
+                                    if (PS.data(xIt + 1, yIt)[0] === "f") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt + 1, yIt)[0] === "b") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt + 1, yIt)[0] === "d") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt + 1, yIt)[0] === "z") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
+                                } else if(relicFlag){
+                                    relicFlag = false;
+                                    if (PS.data(xIt + 1, yIt)[0] === "f") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt + 1, yIt)[0] === "b") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt + 1, yIt)[0] === "d") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt + 1, yIt)[0] === "z") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
+                                } else {
+                                    if (PS.data(xIt + 1, yIt)[0] === "f") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt + 1, yIt)[0] === "b") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt + 1, yIt)[0] === "d") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt + 1, yIt)[0] === "z") {
+                                        PS.data(xIt + 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
                                 }
                             } else{
+                                if(relicFlag){
+                                    relicFlag = false;
+                                    PS.data(xIt, yIt, ["x", false, false]);
+                                }
+                                if(bFlag){
+                                    bFlag = false;
+                                    PS.data(xIt, yIt, ["b", false, false]);
+                                }
+                                if(dFlag){
+                                    dFlag = false;
+                                    PS.data(xIt, yIt, ["d", false, false]);
+                                }
+                                serializeCurrentMap();
                                 currentMap = mapWhereToArray[currentMap][2];
 
-                                setupMap();
+                                setupMap("W");
+                                darkenScreen();
                             }
 							break;
 						case 2:
                             if(yIt + 1 < gridSizeY) {
-                                if (PS.data(xIt, yIt + 1)[0] === "f") {
-                                    PS.data(xIt, yIt + 1, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["f", false, false]);
-                                }
-                                if (PS.data(xIt, yIt + 1)[0] === "b") {
-                                    PS.data(xIt, yIt + 1, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["b", false, false]);
-                                }
-                                if (PS.data(xIt, yIt + 1)[0] === "d") {
-                                    PS.data(xIt, yIt + 1, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["d", false, false]);
+                                if(bFlag){
+                                    bFlag = false;
+                                    if (PS.data(xIt, yIt + 1)[0] === "f") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt + 1)[0] === "b") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt + 1)[0] === "d") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt + 1)[0] === "z") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
+                                } else if(dFlag){
+                                    dFlag = false;
+                                    if (PS.data(xIt, yIt + 1)[0] === "f") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt + 1)[0] === "b") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt + 1)[0] === "d") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt + 1)[0] === "z") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
+                                } else if(relicFlag){
+                                    relicFlag = false;
+                                    if (PS.data(xIt, yIt + 1)[0] === "f") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt + 1)[0] === "b") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt + 1)[0] === "d") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt + 1)[0] === "z") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
+                                } else {
+                                    if (PS.data(xIt, yIt + 1)[0] === "f") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt + 1)[0] === "b") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt + 1)[0] === "d") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt, yIt + 1)[0] === "z") {
+                                        PS.data(xIt, yIt + 1, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
                                 }
                             } else{
+                                if(relicFlag){
+                                    relicFlag = false;
+                                    PS.data(xIt, yIt, ["x", false, false]);
+                                }
+                                if(bFlag){
+                                    bFlag = false;
+                                    PS.data(xIt, yIt, ["b", false, false]);
+                                }
+                                if(dFlag){
+                                    dFlag = false;
+                                    PS.data(xIt, yIt, ["d", false, false]);
+                                }
+                                serializeCurrentMap();
                                 currentMap = mapWhereToArray[currentMap][3];
 
-                                setupMap();
+                                setupMap("S");
+                                darkenScreen();
                             }
 							break;
 						case 3:
                             if(xIt - 1 >= 0) {
-                                if (PS.data(xIt - 1, yIt)[0] === "f") {
-                                    PS.data(xIt - 1, yIt, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["f", false, false]);
-                                }
-                                if (PS.data(xIt - 1, yIt)[0] === "b") {
-                                    PS.data(xIt - 1, yIt, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["b", false, false]);
-                                }
-                                if (PS.data(xIt - 1, yIt)[0] === "d") {
-                                    PS.data(xIt - 1, yIt, ["s", false, true]);
-                                    PS.data(xIt, yIt, ["d", false, false]);
+                                if(bFlag){
+                                    bFlag = false;
+                                    if (PS.data(xIt - 1, yIt)[0] === "f") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt - 1, yIt)[0] === "b") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt - 1, yIt)[0] === "d") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt - 1, yIt)[0] === "z") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["b", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
+                                } else if(dFlag){
+                                    dFlag = false;
+                                    if (PS.data(xIt - 1, yIt)[0] === "f") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt - 1, yIt)[0] === "b") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt - 1, yIt)[0] === "d") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt - 1, yIt)[0] === "z") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["d", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
+                                } else if(relicFlag){
+                                    relicFlag = false;
+                                    if (PS.data(xIt - 1, yIt)[0] === "f") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt - 1, yIt)[0] === "b") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt - 1, yIt)[0] === "d") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt - 1, yIt)[0] === "z") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["x", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
+                                } else {
+                                    if (PS.data(xIt - 1, yIt)[0] === "f") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt - 1, yIt)[0] === "b") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        bFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt - 1, yIt)[0] === "d") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        dFlag = true;
+                                        darkenScreen();
+                                    }
+                                    if (PS.data(xIt - 1, yIt)[0] === "z") {
+                                        PS.data(xIt - 1, yIt, ["s", false, true]);
+                                        PS.data(xIt, yIt, ["f", false, false]);
+                                        relicFlag = true;
+                                        pickupCounter++;
+                                        darkenScreen();
+                                    }
                                 }
                             } else{
+                                if(relicFlag){
+                                    relicFlag = false;
+                                    PS.data(xIt, yIt, ["x", false, false]);
+                                }
+                                if(bFlag){
+                                    bFlag = false;
+                                    PS.data(xIt, yIt, ["b", false, false]);
+                                }
+                                if(dFlag){
+                                    dFlag = false;
+                                    PS.data(xIt, yIt, ["d", false, false]);
+                                }
+                                serializeCurrentMap();
                                 currentMap = mapWhereToArray[currentMap][4];
 
-                                setupMap();
+                                setupMap("E");
+                                darkenScreen();
                             }
 							break;
 					}
@@ -785,11 +1335,45 @@ var G = (function(){
                     if(declareVictory()){
                     	doVictory();
 					}
+                    if(deathCounter <= 0){
+                        if(!declareVictory()) {
+                            serializeCurrentMap();
+                            relicFlag = false;
+                            bFlag = false;
+                            dFlag = false;
+                            resetMaps();
+
+                            currentMap = 0;
+
+                            setupMap("N");
+                            deathCounter = maxDeathCounter;
+                            pickupCounter = 0;
+                        }
+                    }
 					return;
                 }
             }
         }
 	}
+
+	function resetMaps(){
+	    var mapIt;
+	    var xIt;
+	    var yIt;
+
+	    for(mapIt = 0; mapIt < mapArray.length; mapIt++){
+	        currentMap = mapIt;
+	        setupMap("N");
+            for(xIt = 0; xIt < gridSizeX; xIt++){
+                for(yIt = 0; yIt < gridSizeY; yIt++){
+                    if(PS.data(xIt, yIt)[0] === "x"){
+                        PS.data(xIt, yIt, ["z", false, false]);
+                    }
+                }
+            }
+            serializeCurrentMap();
+        }
+    }
 
 	var isWinning = false;
 
@@ -797,10 +1381,12 @@ var G = (function(){
         if (!isWinning) {
             isWinning = true;
 
-            var gridSizeX = 16;
-            var gridSizeY = 16;
+            PS.statusText("VICTORY");
 
+            /*var gridSizeX = 16;
+            var gridSizeY = 16;
             var reqVic = 0;
+
             var curVic = 0;
 
             currentMap++;
@@ -812,7 +1398,7 @@ var G = (function(){
             timer = PS.timerStart(60,
                 function endMap() {
                     if (currentMap < mapNumber) {
-                        setupMap();
+                        //setupMap();
                     } else {
                         PS.statusText("");
                         if (db && PS.dbValid(db)) {
@@ -824,7 +1410,7 @@ var G = (function(){
 
                     isWinning = false;
                     PS.timerStop(timer);
-                });
+                });*/
         }
 	}
 
@@ -836,7 +1422,7 @@ var G = (function(){
 		init: function(system, options){
 			PS.gridSize(gridSizeX, gridSizeY);
 			PS.statusText("");
-			setupMap();
+			setupMap("N");
 		},
 
 		keyDown: function(key, shift, ctrl, options){
